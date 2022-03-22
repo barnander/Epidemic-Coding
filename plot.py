@@ -19,8 +19,9 @@ def plot_show(list_of_infections):
     y=np.array(list_of_infections)
     plt.xlabel('Days(D)')
     plt.ylabel('Number of infected (S)')
-    plt.plot(x,y) 
+    plt.plot(x,y,label='Number Infected') 
     plt.title("Matplotlib Plot NumPy Array")
+    plt.legend()
     return plt.show()
                
 def original_grid(n):
