@@ -25,3 +25,21 @@ def in_range(square, radius):
     affected_squares.remove(square)
     return affected_squares
 
+def grid_search(grid, letter):
+    n = len(grid)
+    pos_letter = []
+    for i in range(n):
+        for j in range(n):
+            if grid[i,j] == letter:
+                pos_letter.append(f'[{i},{j}]')
+    return pos_letter
+      
+        
+
+def main(n):
+    keys = [f'[{i},{j}]' for i in range(n) for j in range(n)]
+    values = [-1 for i in range(n^2)]
+    inf_track = {key:value for (key,value) in zip(keys,values)}
+    grid = original_grid(n)
+    
+    
