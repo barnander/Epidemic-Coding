@@ -15,7 +15,8 @@ def original_grid(n):
     i = random.randint(0,n-1)
     j = random.randint(0, n-1)
     grid[i,j] = 'I'
-    return grid
+    intgrid=np.zeros((n,n),dtype=int)
+    return grid,intgrid
 
 def in_range(square, radius):
     affected_squares = []
@@ -42,4 +43,28 @@ def main(n):
     inf_track = {key:value for (key,value) in zip(keys,values)}
     grid = original_grid(n)
     
+
+
+def integer_grid(n):
+    testgrid=original_grid(n)[0]
+    intgrid=original_grid(n)[1]  
+    for counter1,row in enumerate(testgrid):
+        for counter2,letter in enumerate(row):
+           
+            if letter=='S':
+                intgrid[counter1,counter2]=0
+            else:
+                intgrid[counter1,counter2]=1
+    return intgrid
+
+def grid_plot(intgrid):
+    cols=len(intgrid[0])
+    rows=len(intgrid[1])
+    plt.imshow(intgrid,interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows],cmap='bwr')
+    plt.axis('off')
+
+#testing that it works
+intgrid=integer_grid(10)
+print(intgrid)
+grid_plot(intgrid)
     
