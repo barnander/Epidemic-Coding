@@ -8,6 +8,8 @@ Created on Tue Mar 22 13:11:22 2022
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import matplotlib.animation as animation
+import matplotlib.colors as colors
 
 def original_grid(n):
     row = ["S" for i in range(n)]
@@ -17,7 +19,6 @@ def original_grid(n):
     grid[i,j] = 'I'
     intgrid=np.zeros((n,n),dtype=int)
     return grid#,intgrid
-
 def in_range(square, radius,allowed_coords):
     affected_squares = []
     x = square[0]
@@ -46,15 +47,27 @@ def integer_grid(grid):
            
             if letter=='I':
                 intgrid[counter1,counter2]=1
+            elif letter=='R':
+                intgrid[counter1,counter2]=2
             else:
                 intgrid[counter1,counter2]=0
     return intgrid
 
-def grid_plot(intgrid):
-    cols=len(intgrid[0])
-    rows=len(intgrid[1])
-    plt.imshow(intgrid,interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows],cmap='bwr')
+def grid_animation(grid_list):
+    fig = plt.figure( figsize=(8,8) )
+    first_grid = grid_list[0]
+    cols=len(first_grid[0])
+    rows=len(first_grid[1])
+    brg=colors.ListedColormap(['blue','red','green'])
+    bounds=[0,1,2,3]
+    norm = colors.BoundaryNorm(bounds, brg.N)
+    im = plt.imshow(first_grid,cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
     plt.axis('off')
+    def animate_func(i):
+        im.set_array(grid_list[i])
+        return [im]
+    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list), interval = 600)
+    return anim
     
 def prob(inf_rate):
    limit = int(1000 * inf_rate)
@@ -81,7 +94,9 @@ def main(n, inf_rate, inf_range, inf_min, inf_max):
     inf_track = {key:value for (key,value) in zip(keys,values)}
     grid = original_grid(n)
     print(grid)
+    grid_list=[]
     for i in range(10):
+        
         infected_list = grid_search(grid, 'I')        
         for infected_pos in infected_list:
             
@@ -95,21 +110,21 @@ def main(n, inf_rate, inf_range, inf_min, inf_max):
             else:
                 inf_track[str(infected_pos)] -= 1
         print(inf_track)
+        numbergrid=integer_grid(grid)
+        grid_list.append(numbergrid)
         infected_list = grid_search(grid, 'I')
         grid = infect(grid, inf_rate, inf_range, infected_list)
+        numbergrid=integer_grid(grid)
         print(grid)
-        grid_plot(integer_grid(grid))
-    
-    return
+    return grid_list
                 
 
 
 
 #testing that it works
-main(5,0.5,2,3,5)
-
-        
-
+# main(5,0.5,2,3,5)
+anim=grid_animation(main(5,0.5,2,3,5))
 
 
-    
+
+
