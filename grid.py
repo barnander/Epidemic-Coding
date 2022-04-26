@@ -54,9 +54,9 @@ def integer_grid(grid):
                 intgrid[counter1,counter2]=0
     return intgrid
 
-def grid_animation(grid_list):
+
+def animate_func(i,grid_list,first_grid):
     fig = plt.figure(2)
-    first_grid = grid_list[0]
     cols=len(first_grid[0])
     rows=len(first_grid[1])
     brg=colors.ListedColormap(['blue','red','green','black'])
@@ -64,13 +64,12 @@ def grid_animation(grid_list):
     norm = colors.BoundaryNorm(bounds, brg.N)
     im = plt.imshow(first_grid,cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
     plt.axis('off')
-    # plt.gca().cla()
-    #plt.gca().cla()
+    im.set_array(grid_list[i])
+    return [im]
 
-    def animate_func(i):
-        im.set_array(grid_list[i])
-        return [im]
-    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list), interval = 600,repeat=False)
+def grid_animation(grid_list):
+    fig = plt.figure(2)
+    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list),fargs=(grid_list,grid_list[0],), interval = 600,repeat=False)
     return anim
     
 def prob(inf_rate):
@@ -124,7 +123,7 @@ def main(n, inf_rate, inf_range, rec_rate, death_rate, duration):
         numbergrid=integer_grid(grid)
         grid_list.append(numbergrid)
         # print(grid)
-        print(grid)
+        # print(grid)
     
     inf_data=[]
     rec_data=[]
@@ -150,7 +149,6 @@ def grid_count(state,grid_list):
     return grid_count_list
 
 def plot_show(list_of_infections):
-    print(list_of_infections)
     x=np.arange(len(list_of_infections[0]))
     y=np.array(list_of_infections[0])
     z=np.array(list_of_infections[1])
@@ -174,6 +172,5 @@ def plot_show(list_of_infections):
 grid_list=main(30,0.5,2,0.2,0.05, 50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
-# subplot(plot_show(grid_count_list(grid_list)),anim=grid_animation(grid_list))
 
 
