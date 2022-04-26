@@ -5,12 +5,37 @@ Created on Tue Mar 22 13:11:22 2022
 @author: Basil
 """
 
+
+
+
+
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import random
 import matplotlib.animation as animation
 import matplotlib.colors as colors
+import argparse
 
+def main(*args):
+    parser=argparse.ArgumentParser(description='create sim animation')
+    parser.add_argument('--size,',metavar='N',type=int,default=25,
+                       help='Use a grid of size N x N')
+    parser.add_argument('--Duration',metavar='T',type=int,default=50,
+                        help='Set the lenght of time simutlated')
+    parser.add_argument('--Rec',metavar='p',type=float,default=0.1,
+                        help='Chance of recovery per day')
+    parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
+                        help='Chance for be infected when in range')
+    parser.add_argument('--Spread',metavar='D',type=int,default=2,
+                        help='infection can jump a distance of D away from a case')
+    parser.add_argument('--plot',action='store_true',
+                        help='provides a plot instead of animation')
+    parser.add_argument('--file',metavar='n',type=str,default=None,
+                        help='give the name to a file to save instead of display')
+    args=parser.parse_args(args)
 def original_grid(n):
     row = ["S" for i in range(n)]
     grid = np.array([row for i in range(n)])
