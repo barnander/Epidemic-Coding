@@ -67,7 +67,7 @@ def grid_animation(grid_list):
     def animate_func(i):
         im.set_array(grid_list[i])
         return [im]
-    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list), interval = 600)
+    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list), interval = 600,repeat=False)
     return anim
     
 def prob(inf_rate):
