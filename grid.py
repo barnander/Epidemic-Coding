@@ -135,22 +135,19 @@ def main(n, inf_rate, inf_range, rec_rate, death_rate, duration):
         suc_data.append(len(grid_search(grid, 'S')))
     return grid_list
 
-def grid_count(grid_list):
-    grid_count_inf_list=[]
-    grid_count_sus_list=[]
-    grid_count_rec_list=[]
-    grid_count_dea_list=[]
-    for grid in grid_list:
-        grid_count_inf=len(grid[grid==1])
-        grid_count_sus=len(grid[grid==0])
-        grid_count_rec=len(grid[grid==2])
-        grid_count_dea=len(grid[grid==3])
-        grid_count_inf_list.append(grid_count_inf)
-        grid_count_sus_list.append(grid_count_sus)
-        grid_count_rec_list.append(grid_count_rec)
-        grid_count_dea_list.append(grid_count_dea)
+def grid_count_list(grid_list):
+    grid_count_inf_list=grid_count(1,grid_list)
+    grid_count_sus_list=grid_count(0,grid_list)
+    grid_count_rec_list=grid_count(2,grid_list)
+    grid_count_dea_list=grid_count(3,grid_list)
     return grid_count_inf_list,grid_count_sus_list, grid_count_rec_list, grid_count_dea_list
 
+def grid_count(state,grid_list):
+    grid_count_list=[]
+    for grid in grid_list:
+        grid_count_state=len(grid[grid==state])
+        grid_count_list.append(grid_count_state)
+    return grid_count_list
 
 def plot_show(list_of_infections):
     print(list_of_infections)
@@ -168,15 +165,15 @@ def plot_show(list_of_infections):
     plt.plot(x,a,label='Number of Recovered')
     plt.plot(x,b, label='Number of Dead')
     plt.plot()
-    plt.title("Matplotlib Plot NumPy Array")
+    plt.title("Population Statistics from Simulation")
     plt.legend()
     return plt.show()
 
-#testing that it works
-# main(5,0.5,2,3,5)
+
+
 grid_list=main(30,0.5,2,0.2,0.05, 50)
 anim=grid_animation(grid_list)
-plot_show(grid_count(grid_list))
-
+plot_show(grid_count_list(grid_list))
+# subplot(plot_show(grid_count_list(grid_list)),anim=grid_animation(grid_list))
 
 
