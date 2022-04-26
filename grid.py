@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Mar 22 13:11:22 2022
-
 @author: Basil
 """
 
@@ -56,7 +55,7 @@ def integer_grid(grid):
     return intgrid
 
 def grid_animation(grid_list):
-    fig = plt.figure( figsize=(8,8) )
+    fig = plt.figure(2)
     first_grid = grid_list[0]
     cols=len(first_grid[0])
     rows=len(first_grid[1])
@@ -65,7 +64,11 @@ def grid_animation(grid_list):
     norm = colors.BoundaryNorm(bounds, brg.N)
     im = plt.imshow(first_grid,cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
     plt.axis('off')
+<<<<<<< HEAD
+    # plt.gca().cla()
+=======
     #plt.gca().cla()
+>>>>>>> a9c6ae656197c339cc6931cc849cd430cc2f1ba3
 
     def animate_func(i):
         im.set_array(grid_list[i])
@@ -86,7 +89,7 @@ def infect(grid, inf_rate, inf_range, infected_list):
     allowed_coords = [[i,j] for i in range(n) for j in range(n)]
     for infected in infected_list:
         contacts = in_range(infected, inf_range, allowed_coords)
-        contacts = [i for i in contacts if grid[i[0],i[1]] != 'R']
+        contacts = [i for i in contacts if grid[i[0],i[1]] == 'S']
         for i in contacts:
             if prob(inf_rate):
                 grid[i[0],i[1]] = 'I'
@@ -123,7 +126,11 @@ def main(n, inf_rate, inf_range, rec_rate, death_rate, duration):
         grid = infect(grid, inf_rate, inf_range, infected_list)
         numbergrid=integer_grid(grid)
         grid_list.append(numbergrid)
+<<<<<<< HEAD
+        # print(grid)
+=======
         print(grid)
+>>>>>>> a9c6ae656197c339cc6931cc849cd430cc2f1ba3
     
     inf_data=[]
     rec_data=[]
@@ -134,6 +141,50 @@ def main(n, inf_rate, inf_range, rec_rate, death_rate, duration):
         suc_data.append(len(grid_search(grid, 'S')))
     return grid_list
 
+<<<<<<< HEAD
+def grid_count(grid_list):
+    grid_count_inf_list=[]
+    grid_count_sus_list=[]
+    grid_count_rec_list=[]
+    grid_count_dea_list=[]
+    for grid in grid_list:
+        grid_count_inf=len(grid[grid==1])
+        grid_count_sus=len(grid[grid==0])
+        grid_count_rec=len(grid[grid==2])
+        grid_count_dea=len(grid[grid==3])
+        grid_count_inf_list.append(grid_count_inf)
+        grid_count_sus_list.append(grid_count_sus)
+        grid_count_rec_list.append(grid_count_rec)
+        grid_count_dea_list.append(grid_count_dea)
+    return grid_count_inf_list,grid_count_sus_list, grid_count_rec_list, grid_count_dea_list
+
+
+def plot_show(list_of_infections):
+    print(list_of_infections)
+    x=np.arange(len(list_of_infections[0]))
+    y=np.array(list_of_infections[0])
+    z=np.array(list_of_infections[1])
+    a=np.array(list_of_infections[2])
+    b=np.array(list_of_infections[3])
+    line_graph=plt.figure(1)
+    plt.gca().cla()
+    plt.xlabel('Day(D)')
+    plt.ylabel('Number of People')
+    plt.plot(x,y,label='Number of Infected') 
+    plt.plot(x,z,label='Number of Susceptible')
+    plt.plot(x,a,label='Number of Recovered')
+    plt.plot(x,b, label='Number of Dead')
+    plt.plot()
+    plt.title("Matplotlib Plot NumPy Array")
+    plt.legend()
+    return plt.show()
+
+#testing that it works
+# main(5,0.5,2,3,5)
+grid_list=main(30,0.5,2,0.2,0.05, 50)
+anim=grid_animation(grid_list)
+plot_show(grid_count(grid_list))
+=======
 # def grid_count(grid_list):
 #     grid_count_inf_list=[]
 #     grid_count_sus_list=[]
@@ -177,4 +228,5 @@ grid_animation(grid_list)
 #plot_show(grid_count(grid_list))
 
 
+>>>>>>> a9c6ae656197c339cc6931cc849cd430cc2f1ba3
 
