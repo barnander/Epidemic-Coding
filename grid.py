@@ -63,6 +63,8 @@ def grid_animation(grid_list):
     norm = colors.BoundaryNorm(bounds, brg.N)
     im = plt.imshow(first_grid,cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
     plt.axis('off')
+    plt.gca().cla()
+
     def animate_func(i):
         im.set_array(grid_list[i])
         return [im]
@@ -149,7 +151,7 @@ def plot_show(list_of_infections):
     z=np.array(list_of_infections[1])
     a=np.array(list_of_infections[2])
     b=np.array(list_of_infections[3])
-    plt.clf()
+    plt.gca().cla()
     plt.xlabel('Day(D)')
     plt.ylabel('Number of People')
     plt.plot(x,y,label='Number of Infected') 
