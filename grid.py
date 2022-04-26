@@ -50,6 +50,9 @@ def integer_grid(grid):
                 intgrid[counter1,counter2]=1
             elif letter=='R':
                 intgrid[counter1,counter2]=2
+            
+            elif letter == 'D':
+                intgrid[counter1,counter2]=3
             else:
                 intgrid[counter1,counter2]=0
     return intgrid
@@ -59,8 +62,8 @@ def grid_animation(grid_list):
     first_grid = grid_list[0]
     cols=len(first_grid[0])
     rows=len(first_grid[1])
-    brg=colors.ListedColormap(['blue','red','green'])
-    bounds=[0,1,2,3]
+    brg=colors.ListedColormap(['blue','red','green','black'])
+    bounds=[0,1,2,3,4]
     norm = colors.BoundaryNorm(bounds, brg.N)
     im = plt.imshow(first_grid,cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
     plt.axis('off')
@@ -83,18 +86,18 @@ def infect(grid, inf_rate, inf_range, infected_list):
     allowed_coords = [[i,j] for i in range(n) for j in range(n)]
     for infected in infected_list:
         contacts = in_range(infected, inf_range, allowed_coords)
-        contacts = [i for i in contacts if grid[i[0],i[1]] != 'R']
+        contacts = [i for i in contacts if grid[i[0],i[1]] == "S"]
         for i in contacts:
             if prob(inf_rate):
                 grid[i[0],i[1]] = 'I'
     return grid  
 
-def main(n, inf_rate, inf_range, rec_rate, duration):
+def main(n, inf_rate, inf_range, rec_rate, death_rate, duration):
     # keys = [f'[{i}, {j}]' for i in range(n) for j in range(n)]
     # values = [-1 for i in range(n**2)]
     # inf_track = {key:value for (key,value) in zip(keys,values)}
     grid = original_grid(n)
-    grid_list=[]
+    grid_list=[integer_grid(grid)]
     for i in range(duration):
         
         infected_list = grid_search(grid, 'I')        
@@ -111,20 +114,16 @@ def main(n, inf_rate, inf_range, rec_rate, duration):
         #         inf_track[str(infected_pos)] -= 1
             if prob(rec_rate):
                 grid[infected_pos[0], infected_pos[1]] = 'R'
-            
+            elif prob(death_rate):
+                grid[infected_pos[0], infected_pos[1]] = 'D'
+
+        
         
         numbergrid=integer_grid(grid)
         grid_list.append(numbergrid)
         infected_list = grid_search(grid, 'I')
         grid = infect(grid, inf_rate, inf_range, infected_list)
-
         numbergrid=integer_grid(grid)
-        
-    #     print(grid)
-    # for grid in grid_list:
-    #     inf_data.append(len(grid_search(grid, "I")))
-    #     rec_data.append(len(grid_search(grid, "R")))
-    #     suc_data.append(len(grid_searcg(grid, "S")))
     return grid_list
                 
 
@@ -132,7 +131,7 @@ def main(n, inf_rate, inf_range, rec_rate, duration):
 
 #testing that it works
 # main(5,0.5,2,3,5)
-anim=grid_animation(main(50,0.2,2,0.1,50))
+anim=grid_animation(main(50,0.2,2,0.03,0.005,50))
 
 
 
