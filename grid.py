@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import random
 import matplotlib.animation as animation
 import matplotlib.colors as colors
+import pandas as pd
 
 def original_grid(n):
     row = ["S" for i in range(n)]
@@ -167,10 +168,34 @@ def plot_show(list_of_infections):
     plt.legend()
     return plt.show()
 
+def stats_table(grid_list,list_of_infections):
+    # print(int((len(grid_list)-1)/4))
+    # print(grid_list[int(len(grid_list)-1)])
+    stats=np.zeros((4,4),dtype=int)
+    if (len(grid_list)-1)%4 ==0:
+        list_of_days=[grid_list[int((len(grid_list)-1)/4)],grid_list[int((len(grid_list)-1)/2)],grid_list[int((len(grid_list)-1)*(3/4))],grid_list[int(len(grid_list)-1)]]
+    else:
+        list_of_days=[grid_list[int(((len(grid_list)-1)/4))],grid_list[int((len(grid_list)-1)/2)],grid_list[int((len(grid_list)-1)*(3/4))],grid_list[int(len(grid_list)-1)]]
+    
+        
+    for counter,i in enumerate(list_of_days):
+        stats[0,(counter)]=len(grid_search(i,1))
+        stats[1,(counter)]=len(grid_search(i,0))
+        stats[2,(counter)]=len(grid_search(i,3))
+        stats[3,(counter)]=len(grid_search(i,2))
+    stat_table=plt.figure(2)
+    fig, axs =plt.subplots(figsize = (10,2))
+    axs.axis('off')
+    df = pd.DataFrame(stats, 
+                      columns=['Day '+ str(int((len(grid_list)-1)/4)),'Day '+ str(int((len(grid_list)-1)/2)),'Day '+ str(int((len(grid_list)-1)*(3/4))),'Day '+ str((len(grid_list)-1))], 
+                      index = [ 'Number of Infected', 'Number of Susceptible', 'Number of Dead', 'Number of recovered'])
+    table = axs.table(cellText=df.values, cellLoc='center',colLabels = df.columns, rowLabels = df.index,  loc='center',colWidths=[0.15,0.15,0.15,0.15])
+    max1=max(list_of_infections[0])
+    # plt.title(('Max infection number was', max1))
+    plt.show()
 
-
-grid_list=main(30,0.5,2,0.2,0.05, 50)
+grid_list=main(30,0.5,2,0.2,0.05,50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
-
+stats_table(grid_list,grid_count_list(grid_list))
 
