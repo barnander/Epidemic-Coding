@@ -93,12 +93,26 @@ def infect(grid, inf_rate, inf_range, infected_list):
             if prob(inf_rate):
                 grid[i[0],i[1]] = 'I'
     return grid  
+def demographic_grid(n,pop_structure):
+    demographic_grid=np.zeros((n,n),dtype=str)
+    if pop_structure=='expansive':
+        list_choice=['C','C','C','C','Y','Y','Y','M','M','O']
+    elif pop_structure=='constrictive':
+        list_choice=['C','Y','Y','M','M','M','O','O','O','O']
+    elif pop_structure=='stationary':
+        list_choice=['C','Y','M','O']
+    for counter1,row in enumerate(demographic_grid):
+        for counter2,letter in enumerate(row):
+            demographic_grid[counter1,counter2]=random.choice(list_choice)
+    return demographic_grid
 
-def main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate, duration):
+def main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration):
     keys = [f'[{i}, {j}]' for i in range(n) for j in range(n)]
     values = [-1 for i in range(n**2)]
     inf_track = {key:value for (key,value) in zip(keys,values)}
     grid = original_grid(n)
+    demographic_grid2=demographic_grid(n,pop_structure)
+    # print(demographic_grid2)
     # print(grid)
     grid_list=[integer_grid(grid)]
     hosp_capacity=percent_hosp_capacity*(n**2)
@@ -213,7 +227,7 @@ def plot_show(list_of_infections):
     return plt.show()
 
 
-grid_list=main(50,0.5,2,0.2,0.005,0.05,0.1,0.05,50)
+grid_list=main(50,0.5,2,0.2,0.005,0.05,0.1,0.05,'expansive',50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
 
