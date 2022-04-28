@@ -155,47 +155,34 @@ def plot_show(list_of_infections):
     z=np.array(list_of_infections[1])
     a=np.array(list_of_infections[2])
     b=np.array(list_of_infections[3])
-    line_graph=plt.figure(1)
-    plt.gca().cla()
-    plt.xlabel('Day(D)')
-    plt.ylabel('Number of People')
-    plt.plot(x,y,label='Number of Infected') 
-    plt.plot(x,z,label='Number of Susceptible')
-    plt.plot(x,a,label='Number of Recovered')
-    plt.plot(x,b, label='Number of Dead')
-    plt.plot()
-    plt.title("Population Statistics from Simulation")
-    plt.legend()
+    fig, (axs1,axs2) =plt.subplots(1,2,figsize = (15,5),num=1)
+    peak_inf=max(list_of_infections[0])
+    index=list_of_infections[0].index(peak_inf)
+    print('The peak number of infections was', peak_inf, 'and occured on day', index)
+    axs2=plt.xlabel('Day(D)')
+    axs2=plt.ylabel('Number of People')
+    axs2=plt.plot(x,y,label='Number of Infected',color='r') 
+    axs2=plt.plot(x,z,label='Number of Susceptible',color='b')
+    axs2=plt.plot(x,a,label='Number of Recovered',color='g')
+    axs2=plt.plot(x,b, label='Number of Dead',color='k')
+    axs2=plt.plot()
+    axs2=plt.title("Population Statistics from Simulation")
+    axs2=plt.legend()
+    axs1.axis('off')
+    stats=np.zeros((4,4),dtype=int)
+    for counter,i in enumerate(list_of_infections):
+        stats[(counter),0]=i[int((len(i)-1)/4)]
+        stats[(counter),1]=i[int((len(i)-1)/2)]
+        stats[(counter),2]=i[int((len(i)-1)*(3/4))]
+        stats[(counter),3]=i[int(len(i)-1)]
+    df = pd.DataFrame(stats, 
+                      columns=['Day '+ str(int((len(list_of_infections[0])-1)/4)),'Day '+ str(int((len(list_of_infections[0])-1)/2)),'Day '+ str(int((len(list_of_infections[0])-1)*(3/4))),'Day '+ str((len(list_of_infections[0])-1))], 
+                      index = [ 'Number of Infected', 'Number of Susceptible', 'Number of Dead', 'Number of recovered'])
+    table = axs1.table(cellText=df.values, cellLoc='center',colLabels = df.columns, rowLabels = df.index,  loc='center',colWidths=[0.15,0.15,0.15,0.15])
     return plt.show()
 
-def stats_table(grid_list,list_of_infections):
-    # print(int((len(grid_list)-1)/4))
-    # print(grid_list[int(len(grid_list)-1)])
-    stats=np.zeros((4,4),dtype=int)
-    if (len(grid_list)-1)%4 ==0:
-        list_of_days=[grid_list[int((len(grid_list)-1)/4)],grid_list[int((len(grid_list)-1)/2)],grid_list[int((len(grid_list)-1)*(3/4))],grid_list[int(len(grid_list)-1)]]
-    else:
-        list_of_days=[grid_list[int(((len(grid_list)-1)/4))],grid_list[int((len(grid_list)-1)/2)],grid_list[int((len(grid_list)-1)*(3/4))],grid_list[int(len(grid_list)-1)]]
-    
-        
-    for counter,i in enumerate(list_of_days):
-        stats[0,(counter)]=len(grid_search(i,1))
-        stats[1,(counter)]=len(grid_search(i,0))
-        stats[2,(counter)]=len(grid_search(i,3))
-        stats[3,(counter)]=len(grid_search(i,2))
-    stat_table=plt.figure(2)
-    fig, axs =plt.subplots(figsize = (10,2))
-    axs.axis('off')
-    df = pd.DataFrame(stats, 
-                      columns=['Day '+ str(int((len(grid_list)-1)/4)),'Day '+ str(int((len(grid_list)-1)/2)),'Day '+ str(int((len(grid_list)-1)*(3/4))),'Day '+ str((len(grid_list)-1))], 
-                      index = [ 'Number of Infected', 'Number of Susceptible', 'Number of Dead', 'Number of recovered'])
-    table = axs.table(cellText=df.values, cellLoc='center',colLabels = df.columns, rowLabels = df.index,  loc='center',colWidths=[0.15,0.15,0.15,0.15])
-    max1=max(list_of_infections[0])
-    # plt.title(('Max infection number was', max1))
-    plt.show()
 
 grid_list=main(30,0.5,2,0.2,0.05,50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
-stats_table(grid_list,grid_count_list(grid_list))
 
