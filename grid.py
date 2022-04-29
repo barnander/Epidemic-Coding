@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
+#!usr/bin/env python
 """
 Created on Tue Mar 22 13:11:22 2022
 @author: Basil
 """
 
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -247,7 +248,23 @@ def plot_show(list_of_infections):
     return plt.show()
 
 
-grid_list=main(30,0.5,2,0.2,0.005,0.05,0.1,0.05,'constrictive',50)
-anim=grid_animation(grid_list)
-plot_show(grid_count_list(grid_list))
+
+
+
+
+if __name__ == "__main__":
+    n = int(input("Side length for square grid: "))
+    inf_rate = float(input('Infection Rate: '))
+    inf_range = int((input('Infection Range: ')))
+    rec_rate = float(input("Recovery Rate: "))
+    death_rate = float(input('Death Rate: '))
+    hosp_rate = float(input("Hospital Rate of Infected: "))
+    percent_hosp_capacity = float(input("Hospital Capacity as a percentage of total population: "))
+    hosp_rec_rate= float(input("Recovery rate of infected patients in hospital: "))
+    pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
+    duration= int(input("Time of simulation: "))
+    grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
+    anim=grid_animation(grid_list)
+    plot_show(grid_count_list(grid_list))
+    return
 
