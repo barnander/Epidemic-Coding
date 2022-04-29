@@ -266,5 +266,5 @@ if __name__ == "__main__":
     grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
     anim=grid_animation(grid_list)
     plot_show(grid_count_list(grid_list))
-    return
+
 
