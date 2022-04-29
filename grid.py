@@ -106,6 +106,7 @@ def demographic_grid(n,pop_structure):
             demographic_grid[counter1,counter2]=random.choice(list_choice)
     return demographic_grid
 
+
 def main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration):
     keys = [f'[{i}, {j}]' for i in range(n) for j in range(n)]
     values = [-1 for i in range(n**2)]
@@ -118,6 +119,13 @@ def main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_cap
     hosp_capacity=percent_hosp_capacity*(n**2)
     hosp_overwhelm_days=0
     hod=0
+    child_rec_rate=(2*rec_rate)
+    child_death_rate=(1/4*death_rate)
+    mid_rec_rate=(1/2*rec_rate)
+    mid_death_rate=(2*death_rate)
+    old_rec_rate=(1/4*rec_rate)
+    old_death_rate=(4*death_rate)
+    
     for i in range(duration):
         
         infected_list = grid_search(grid, 'I')  
@@ -127,6 +135,18 @@ def main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_cap
             print('Hospitals were Overwhelmed on day ',i, ' with ',len(hosp_list), 'requiring hospitalisation')
             
         for infected_pos in infected_list:
+            # print(infected_pos)
+            # print(demographic_grid2[infected_pos[0],infected_pos[1]])
+            if demographic_grid2[infected_pos[0],infected_pos[1]]=='C':
+                rec_rate=child_rec_rate
+                death_rate=child_death_rate
+            elif demographic_grid2[infected_pos[0],infected_pos[1]] =='M':
+                rec_rate=mid_rec_rate
+                death_rate=mid_death_rate
+
+            elif demographic_grid2[infected_pos[0],infected_pos[1]] =='O':
+                rec_rate=old_rec_rate
+                death_rate=old_death_rate
             
         #     if inf_track[str(infected_pos)] == -1:
         #         inf_time = random.randint(inf_min, inf_max)
@@ -227,7 +247,7 @@ def plot_show(list_of_infections):
     return plt.show()
 
 
-grid_list=main(50,0.5,2,0.2,0.005,0.05,0.1,0.05,'expansive',50)
+grid_list=main(30,0.5,2,0.2,0.005,0.05,0.1,0.05,'constrictive',50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
 
