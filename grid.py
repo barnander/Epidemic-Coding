@@ -19,7 +19,7 @@ import matplotlib.animation as animation
 import matplotlib.colors as colors
 import argparse
 
-def main(*args):
+def init(*args):
     parser=argparse.ArgumentParser(description='create sim animation')
     parser.add_argument('--size,',metavar='N',type=int,default=25,
                        help='Use a grid of size N x N')
@@ -36,6 +36,10 @@ def main(*args):
     parser.add_argument('--file',metavar='n',type=str,default=None,
                         help='give the name to a file to save instead of display')
     args=parser.parse_args(args)
+    anim=grid_animation(main(args.size,args.Inf,args.Spread,args.Rec,args.Duration))
+    
+    
+    
 def original_grid(n):
     row = ["S" for i in range(n)]
     grid = np.array([row for i in range(n)])
@@ -156,9 +160,7 @@ def main(n, inf_rate, inf_range, rec_rate, duration):
 
 
 #testing that it works
-# main(5,0.5,2,3,5)
-anim=grid_animation(main(50,0.2,2,0.1,50))
-
+#animation=grid_animation(main())
 
 
 
