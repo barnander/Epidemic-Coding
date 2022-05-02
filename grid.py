@@ -10,34 +10,26 @@ import matplotlib.pyplot as plt
 import random
 import matplotlib.animation as animation
 import matplotlib.colors as colors
-<<<<<<< HEAD
 import argparse
 
-def init(*args):
-    parser=argparse.ArgumentParser(description='create sim animation')
-    parser.add_argument('--size,',metavar='N',type=int,default=25,
+parser=argparse.ArgumentParser(description='How each value changes the sim')
+parser.add_argument('Side length for a square grid,',metavar='Give an integer value N ',
                        help='Use a grid of size N x N')
-    parser.add_argument('--Duration',metavar='T',type=int,default=50,
-                        help='Set the lenght of time simutlated')
-    parser.add_argument('--Rec',metavar='p',type=float,default=0.1,
-                        help='Chance of recovery per day')
-    parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
-                        help='Chance for be infected when in range')
-    parser.add_argument('--Spread',metavar='D',type=int,default=2,
-                        help='infection can jump a distance of D away from a case')
-    parser.add_argument('--plot',action='store_true',
-                        help='provides a plot instead of animation')
-    parser.add_argument('--file',metavar='n',type=str,default=None,
-                        help='give the name to a file to save instead of display')
-    args=parser.parse_args(args)
-    anim=grid_animation(main(args.size,args.Inf,args.Spread,args.Rec,args.Duration))
+parser.add_argument('Infection Rate',metavar='Give a value between 0 and 1',
+                        help='Chance of infection each day when in range of an infected individual ')
+parser.add_argument('Infection Range',metavar='Give an integer value N',
+                        help='How far the virus can jump from person to person within the grid')
+parser.add_argument('Recovery Rate',metavar='Give a value between 0 and 1',
+                        help='Chance to recover each day you are infected ')
+parser.add_argument('Death Rate',metavar='Give a value between 0 and 1 ',
+                        help='Chance of an infetced individual to die  ')
+
+args=parser.parse_args()
     
-    
-    
-=======
+
+
 import pandas as pd
 
->>>>>>> 8833a6aa952a66e6ae755288be0a0a5a05e6a475
 def original_grid(n):
     row = ["S" for i in range(n)]
     grid = np.array([row for i in range(n)])
