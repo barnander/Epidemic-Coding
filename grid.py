@@ -13,23 +13,23 @@ import matplotlib.colors as colors
 import argparse
 
 parser=argparse.ArgumentParser(description='How each value changes the sim')
-parser.add_argument('--Size',metavar='N',type=int,default=25,
+parser.add_argument('--Size',metavar='N',type=int,default=50,
                        help='Use a grid of size N x N')
-parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
+parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
                         help='Chance of infection each day when in range of an infected individual ')
 parser.add_argument('--Range',metavar='N',type=int,default=2,
                         help='How far the virus can jump from person to person within the grid')
-parser.add_argument('--Rec',metavar='p',type=float,default=0.1,
+parser.add_argument('--Rec',metavar='p',type=float,default=0.3,
                         help='Chance to recover each day you are infected ')
-parser.add_argument('--Death',metavar='p',type=float,default=0.001,
-                        help='Chance of an infetced individual to die')
-parser.add_argument('--Hosprate',metavar='p',type=float,default=0.4,
+parser.add_argument('--Death',metavar='p',type=float,default=0.005,
+                        help='Chance of an infetced individual to die each day')
+parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
                     help='Chance for an infected individual to be hospitalised')
-parser.add_argument('--Hospcap',metavar='%',type=float,default=0.5,
+parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
                     help='percentage of total population that can be hospitalised before capacity is reached')
 parser.add_argument('--Hosprec',metavar='p',type=float,default=0.3,
                     help='recovery rate when hospitialied')
-parser.add_argument('--Duration',metavar='T',type=int,default=25,
+parser.add_argument('--Duration',metavar='T',type=int,default=50,
                     help='set the duration of the sim to time T')
 
 args=parser.parse_args()
