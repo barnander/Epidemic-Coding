@@ -13,16 +13,24 @@ import matplotlib.colors as colors
 import argparse
 
 parser=argparse.ArgumentParser(description='How each value changes the sim')
-parser.add_argument('Side length for a square grid,',metavar='Give an integer value N ',
+parser.add_argument('--Size',metavar='N',type=int,default=25,
                        help='Use a grid of size N x N')
-parser.add_argument('Infection Rate',metavar='Give a value between 0 and 1',
+parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
                         help='Chance of infection each day when in range of an infected individual ')
-parser.add_argument('Infection Range',metavar='Give an integer value N',
+parser.add_argument('--Range',metavar='N',type=int,default=2,
                         help='How far the virus can jump from person to person within the grid')
-parser.add_argument('Recovery Rate',metavar='Give a value between 0 and 1',
+parser.add_argument('--Rec',metavar='p',type=float,default=0.1,
                         help='Chance to recover each day you are infected ')
-parser.add_argument('Death Rate',metavar='Give a value between 0 and 1 ',
-                        help='Chance of an infetced individual to die  ')
+parser.add_argument('--Death',metavar='p',type=float,default=0.001,
+                        help='Chance of an infetced individual to die')
+parser.add_argument('--Hosprate',metavar='p',type=float,default=0.4,
+                    help='Chance for an infected individual to be hospitalised')
+parser.add_argument('--Hospcap',metavar='%',type=float,default=0.5,
+                    help='percentage of total population that can be hospitalised before capacity is reached')
+parser.add_argument('--Hosprec',metavar='p',type=float,default=0.3,
+                    help='recovery rate when hospitialied')
+parser.add_argument('--Duration',metavar='T',type=int,default=25,
+                    help='set the duration of the sim to time T')
 
 args=parser.parse_args()
     
@@ -268,16 +276,16 @@ def plot_show(list_of_infections):
 
 
 if __name__ == "__main__":
-    n = int(input("Side length for square grid: "))
-    inf_rate = float(input('Infection Rate: '))
-    inf_range = int((input('Infection Range: ')))
-    rec_rate = float(input("Recovery Rate: "))
-    death_rate = float(input('Death Rate: '))
-    hosp_rate = float(input("Hospital Rate of Infected: "))
-    percent_hosp_capacity = float(input("Hospital Capacity as a percentage of total population: "))
-    hosp_rec_rate= float(input("Recovery rate of infected patients in hospital: "))
+    n = args.Size
+    inf_rate = args.Inf
+    inf_range = args.Range
+    rec_rate = args.Rec
+    death_rate = args.Death
+    hosp_rate = args.Hosprate
+    percent_hosp_capacity = args.Hospcap
+    hosp_rec_rate= args.Hosprec
     pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
-    duration= int(input("Time of simulation: "))
+    duration= args.Duration
     grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
     anim=grid_animation(grid_list)
     plot_show(grid_count_list(grid_list))
