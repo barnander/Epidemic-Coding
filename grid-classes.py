@@ -244,6 +244,9 @@ def plot_show(list_of_infections):
     fig, (axs1,axs2) =plt.subplots(1,2,figsize = (15,5),num=1)
     peak_inf=max(list_of_infections[0])
     index=list_of_infections[0].index(peak_inf)
+    list1=["A peak of " + str(peak_inf) +" infections", "occurred on day " + str(index)]
+    joined="\n".join(list1)
+    axs2=plt.annotate(joined,(index,peak_inf),(-1,(peak_inf + list_of_infections[1][1]/10)),arrowprops=dict(arrowstyle='->',relpos=(0.5,0.)),bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="r", lw=1))
     print('The peak number of infections was', peak_inf, 'and occured on day', index)
     axs2=plt.xlabel('Day(D)')
     axs2=plt.ylabel('Number of People')
@@ -287,6 +290,6 @@ def plot_show(list_of_infections):
     # anim=grid_animation(grid_list)
     # plot_show(grid_count_list(grid_list))
 
-grid_list = main(50, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",1.5, 50)
+grid_list = main(30, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",1.5, 50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
