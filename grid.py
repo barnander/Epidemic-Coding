@@ -10,31 +10,29 @@ import matplotlib.pyplot as plt
 import random
 import matplotlib.animation as animation
 import matplotlib.colors as colors
-# <<<<<<< HEAD
-# import argparse
 
-# def init(*args):
-#     parser=argparse.ArgumentParser(description='create sim animation')
-#     parser.add_argument('--size,',metavar='N',type=int,default=25,
-#                        help='Use a grid of size N x N')
-#     parser.add_argument('--Duration',metavar='T',type=int,default=50,
-#                         help='Set the lenght of time simutlated')
-#     parser.add_argument('--Rec',metavar='p',type=float,default=0.1,
-#                         help='Chance of recovery per day')
-#     parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
-#                         help='Chance for be infected when in range')
-#     parser.add_argument('--Spread',metavar='D',type=int,default=2,
-#                         help='infection can jump a distance of D away from a case')
-#     parser.add_argument('--plot',action='store_true',
-#                         help='provides a plot instead of animation')
-#     parser.add_argument('--file',metavar='n',type=str,default=None,
-#                         help='give the name to a file to save instead of display')
-#     args=parser.parse_args(args)
-#     anim=grid_animation(main(args.size,args.Inf,args.Spread,args.Rec,args.Duration))
-    
-    
-    
-# =======
+parser=argparse.ArgumentParser(description='How each value changes the sim')
+parser.add_argument('--Size',metavar='N',type=int,default=50,
+                       help='Use a grid of size N x N')
+parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
+                        help='Chance of infection each day when in range of an infected individual ')
+parser.add_argument('--Range',metavar='N',type=int,default=2,
+                        help='How far the virus can jump from person to person within the grid')
+parser.add_argument('--Rec',metavar='p',type=float,default=0.3,
+                        help='Chance to recover each day you are infected ')
+parser.add_argument('--Death',metavar='p',type=float,default=0.005,
+                        help='Chance of an infetced individual to die each day')
+parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
+                    help='Chance for an infected individual to be hospitalised')
+parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
+                    help='percentage of total population that can be hospitalised before capacity is reached')
+parser.add_argument('--Hosprec',metavar='p',type=float,default=0.3,
+                    help='recovery rate when hospitialied')
+parser.add_argument('--Duration',metavar='T',type=int,default=50,
+                    help='set the duration of the sim to time T')
+
+args=parser.parse_args()
+
 import pandas as pd
 
 # >>>>>>> 8833a6aa952a66e6ae755288be0a0a5a05e6a475
@@ -162,8 +160,8 @@ def age_change(coord, grid, change_rates, resultant_change):
     return grid
 
 
-def main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure, protection, duration):
-    grid = original_grid(n,pop_structure, 0)    
+def main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration):
+    grid = original_grid(n,pop_structure, vacc_percentage)    
     print(grid)
     print(grid[0][0].age)
     grid_list=[integer_grid(grid)]
@@ -275,20 +273,20 @@ def plot_show(list_of_infections):
 
 
 
-#if __name__ == "__main__":
-    # n = int(input("Side length for square grid: "))
-    # inf_rate = float(input('Infection Rate: '))
-    # inf_range = int((input('Infection Range: ')))
-    # rec_rate = float(input("Recovery Rate: "))
-    # death_rate = float(input('Death Rate: '))
-    # hosp_rate = float(input("Hospital Rate of Infected: "))
-    # percent_hosp_capacity = float(input("Hospital Capacity as a percentage of total population: "))
-    # hosp_rec_rate= float(input("Recovery rate of infected patients in hospital: "))
-    # pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
-    # duration= int(input("Time of simulation: "))
-    # grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
-    # anim=grid_animation(grid_list)
-    # plot_show(grid_count_list(grid_list))
+if __name__ == "__main__":
+    n = args.Size
+    inf_rate = args.Inf
+    inf_range = args.Range
+    rec_rate = args.Rec
+    death_rate = args.Death
+    hosp_rate = args.Hosprate
+    percent_hosp_capacity = args.Hospcap
+    hosp_rec_rate= args.Hosprec
+    pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
+    duration= args.Duration
+    grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration)
+    anim=grid_animation(grid_list)
+    plot_show(grid_count_list(grid_list))
 
 grid_list = main(30, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",1.5, 50)
 anim=grid_animation(grid_list)
