@@ -29,7 +29,7 @@ parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
                     help='Chance for an infected individual to be hospitalised')
 parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
                     help='percentage of total population that can be hospitalised before capacity is reached')
-parser.add_argument('--Demo',metavar='d',default='s',choices=['s','c','e'],
+parser.add_argument('--Demo',metavar='d',default='S',choices=['S','C','E'],
                     help='Choose what population demographic is simulated, stationary"s", constrictive"c", expansive"e')
 parser.add_argument('--Vac',metavar='p',type=float,default=0.5,
                     help='The total proportion of the population that recieves a vaccine')
@@ -227,8 +227,8 @@ def age_change(coord, grid, change_rates, resultant_change):
 
 def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, immunity, duration):
     grid = original_grid(n,pop_structure, vacc_percentage,inf_start)    
-    print(grid)
-    print(grid[0][0].age)
+#    print(grid)
+#    print(grid[0][0].age)
     grid_list=[integer_grid(grid)]
     hosp_capacity=percent_hosp_capacity*(n**2)
     hosp_overwhelm_days=0
@@ -254,7 +254,7 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
                     for sus in affected:
                         susceptible.append(sus)
                     if int(person.inf_status[1]) > 2:
-                        print(len(grid_search(grid, "H")))
+#                        print(len(grid_search(grid, "H")))
                         if len(grid_search(grid, "H")) >= hosp_capacity:
                             if prob(2*death_rates[grid[j,i].age]):
                                 grid[j,i].inf_status = "D"
@@ -350,14 +350,53 @@ if __name__ == "__main__":
     n = args.Size
     inf_start=args.Start
     inf_rate = args.Inf
+    while inf_rate>1:
+        print('please give a value between 0 and 1')
+        inf_rate=float(input('please give an infection rate = '))
+    while inf_rate<0:
+        print('please give a value between 0 and 1')
+        inf_rate=float(input('please give an infection rate = '))
     inf_range = args.Range
     rec_rate = args.Rec
+    while rec_rate>1:
+        print('please give a value between 0 and 1')
+        rec_rate=float(input('please give a recovery rate = ' ))
+    while rec_rate<0:
+        print('please give a value between 0 and 1')
+        rec_rate=float(input('please give a recovery rate = ' ))
     death_rate = args.Death
+    while death_rate>1:
+        print('please give a value between 0 and 1')
+        death_rate=float(input('please give a value for the death rate = '))
+    while death_rate<0:
+        print('please give a value between 0 and 1')
+        death_rate=float(input('please give a value for the death rate = '))
     hosp_rate = args.Hosprate
+    while hosp_rate>1:
+        print('please give a value between 0 and 1')
+        hosp_rate=float(input('please give a value for chance of hospitilisation = '))
+    while hosp_rate<0:
+        print('please give a value between 0 and 1')
+        hosp_rate=float(input('please give a value for chance of hospitilisation = '))
     percent_hosp_capacity = args.Hospcap
+    while percent_hosp_capacity>1:
+        print('please give a value between 0 and 1')
+        percent_hosp_capacity=float(input('please give a value for what proportion of the popualation can be hospitilised = '))
+    while percent_hosp_capacity<0:
+        print('please give a value between 0 and 1')
+        percent_hosp_capacity=float(input('please give a value for what proportion of the popualation can be hospitilised = '))
     pop_structure= args.Demo
     vacc_percentage = args.Vac
+    while vacc_percentage>1:
+        print('please give a value between 0 and 1')
+        vacc_percentage=float(input('please give a value for the proportion of population vaccinated = '))
+    while vacc_percentage<0:
+        print('please give a value between 0 and 1')
+        vacc_percentage=float(input('please give a value for the proportion of population vaccinated = '))
     protection = args.Proc
+    while protection<1:
+        print('please give a value greater than 1')
+        protection=float(input('please give a value for the factor that infection rate is reduced by when vaccinated = '))
     immunity=args.Immune
     duration = args.Duration
     grid_list=main(n, inf_start,inf_rate,inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection,immunity, duration)
@@ -368,5 +407,5 @@ if __name__ == "__main__":
 
 #grid_list = main(30,2, 0.3, 2, 0.2, 0.05, 0.15, 0.05, "E",0,1.5, 50)
 
-anim=grid_animation(grid_list)
-plot_show(grid_count_list(grid_list))
+#anim=grid_animation(grid_list)
+#plot_show(grid_count_list(grid_list))
