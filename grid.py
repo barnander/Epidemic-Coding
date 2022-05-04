@@ -10,30 +10,31 @@ import matplotlib.pyplot as plt
 import random
 import matplotlib.animation as animation
 import matplotlib.colors as colors
-
-parser=argparse.ArgumentParser(description='How each value changes the sim')
-parser.add_argument('--Size',metavar='N',type=int,default=50,
-                        help='Use a grid of size N x N')
-parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
-                        help='Chance of infection each day when in range of an infected individual ')
-parser.add_argument('--Range',metavar='N',type=int,default=2,
-                        help='How far the virus can jump from person to person within the grid')
-parser.add_argument('--Rec',metavar='p',type=float,default=0.3,
-                        help='Chance to recover each day you are infected ')
-parser.add_argument('--Death',metavar='p',type=float,default=0.005,
-                        help='Chance of an infetced individual to die each day')
-parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
-                    help='Chance for an infected individual to be hospitalised')
-parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
-                    help='percentage of total population that can be hospitalised before capacity is reached')
-parser.add_argument('--Duration',metavar='T',type=int,default=50,
-                    help='set the duration of the sim to time T')
-parser.add_argument('--Duration',metavar='T',type=int,default=50,
-                    help='set the duration of the sim to time T')
-
-args=parser.parse_args()
-
 import pandas as pd
+
+# parser=argparse.ArgumentParser(description='How each value changes the sim')
+# parser.add_argument('--Size',metavar='N',type=int,default=50,
+#                         help='Use a grid of size N x N')
+# parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
+#                         help='Chance of infection each day when in range of an infected individual ')
+# parser.add_argument('--Range',metavar='N',type=int,default=2,
+#                         help='How far the virus can jump from person to person within the grid')
+# parser.add_argument('--Rec',metavar='p',type=float,default=0.3,
+#                         help='Chance to recover each day you are infected ')
+# parser.add_argument('--Death',metavar='p',type=float,default=0.005,
+#                         help='Chance of an infetced individual to die each day')
+# parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
+#                     help='Chance for an infected individual to be hospitalised')
+# parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
+#                     help='percentage of total population that can be hospitalised before capacity is reached')
+# parser.add_argument('--Duration',metavar='T',type=int,default=50,
+#                     help='set the duration of the sim to time T')
+# parser.add_argument('--Duration',metavar='T',type=int,default=50,
+#                     help='set the duration of the sim to time T')
+
+# args=parser.parse_args()
+
+
 
 
 
@@ -65,8 +66,8 @@ def original_grid(n, pop_structure, vacc_percentage, inf_start):
 
     Returns
     -------
-    grid : np array
-        grid including  the desired amount of infected individuals 
+    grid : Nd array
+        grid including  the desired amount of infected individuals, age distribution and vaccination percentage
 
     """
     ages = ['C','Y','M','O']
@@ -90,15 +91,48 @@ def original_grid(n, pop_structure, vacc_percentage, inf_start):
 
 
 def in_range(square, radius,allowed_coords):
+    """
+    
+
+    Parameters
+    ----------
+    square : List
+        coordinates of (infected) Individual in grid
+    radius : Integer
+        distance the virus can jump in the grid
+    allowed_coords : List
+        list of all the coordinates of the grid
+
+    Returns
+    -------
+    affected_squares : List
+        list of the coordinates of all the squares in the grid within the radius of the infected square
+
+    """
     affected_squares = []
     x = square[0]
     y = square[1]
     affected_squares = [[x+i,y+j] for i in range(-radius,radius+1) for j in range(-radius,radius+1)]
     affected_squares = [i for i in affected_squares if allowed_coords.count(i)]
-    # affected_squares.remove(square)
     return affected_squares
 
 def grid_search(grid, letter):
+    """
+    
+
+    Parameters
+    ----------
+    grid : Nd array
+        grid including all the individuals of the population
+    letter : String
+        infection status desired ("S","I","H", or "R")
+
+    Returns
+    -------
+    pos_letter : List
+        list of the coordinates of individuals that are the desired infected state
+
+    """
     n = len(grid)
     pos_letter = []
     for i in range(n):
@@ -147,7 +181,8 @@ def grid_animation(grid_list):
     return anim
     
 def prob(inf_rate):
-   limit = int(1000 * inf_rate)
+
+   limit = int(1000*inf_rate)
    number = random.randint(1, 1000) 
    if number > limit :
        return False
@@ -179,7 +214,7 @@ def age_change(coord, grid, change_rates, resultant_change):
     return grid
 
 
-def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration):
+def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, immunity, duration):
     grid = original_grid(n,pop_structure, vacc_percentage,inf_start)    
     print(grid)
     print(grid[0][0].age)
@@ -210,19 +245,27 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
                     if int(person.inf_status[1]) > 2:
                         print(len(grid_search(grid, "H")))
                         if len(grid_search(grid, "H")) >= hosp_capacity:
-                            
-                            
-                            grid[j,i].inf_status = "D"
-                            hod += 1
-                            ho_death = True
+                            if prob(2*death_rates[grid[j,i].age]):
+                                grid[j,i].inf_status = "D"
+                                hod += 1
+                                ho_death = True
                         else:
                             grid = age_change([j,i], grid, hosp_rates, "H")
-                            grid = age_change([j,i], grid, rec_rates, "R")
+                            grid = age_change([j,i], grid, rec_rates, "R0")
                     else:
                         person.inf_status = "I" + str(int(person.inf_status[1]) + 1)
                 elif person.inf_status[0] == "H":
                     grid = age_change([j,i], grid, death_rates, "D")
-                    grid = age_change([j,i], grid, rec_rates, "R")
+                    grid = age_change([j,i], grid, rec_rates, "R0")
+                
+                
+                elif person.inf_status[0] == "R":
+                    if int(person.inf_status[1]) > immunity:
+                        person.inf_status = "S"
+                    
+                    else:
+                        person.inf_status = "R" + str(int(person.inf_status[1]) + 1)
+                    
                    
                 i += 1
             j += 1
@@ -292,22 +335,22 @@ def plot_show(list_of_infections):
 
 
 
-if __name__ == "__main__":
-    n = args.Size
-    inf_rate = args.Inf
-    inf_range = args.Range
-    rec_rate = args.Rec
-    death_rate = args.Death
-    hosp_rate = args.Hosprate
-    percent_hosp_capacity = args.Hospcap
-    pop_structure= input("Population demographic ('S', 'C' or 'E'): ")
-    vacc_percentage = args.vaccperc
-    protection = args.portection
-    duration= args.Duration
-    grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration)
-    anim=grid_animation(grid_list)
-    plot_show(grid_count_list(grid_list))
+# if __name__ == "__main__":
+#     n = args.Size
+#     inf_rate = args.Inf
+#     inf_range = args.Range
+#     rec_rate = args.Rec
+#     death_rate = args.Death
+#     hosp_rate = args.Hosprate
+#     percent_hosp_capacity = args.Hospcap
+#     pop_structure= input("Population demographic ('S', 'C' or 'E'): ")
+#     vacc_percentage = args.vaccperc
+#     protection = args.portection
+#     duration= args.Duration
+#     grid_list=main(n, inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration)
+#     anim=grid_animation(grid_list)
+#     plot_show(grid_count_list(grid_list))
 
-grid_list = main(30,2, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",0,1.5, 50)
+grid_list = main(30,2, 0.3, 2, 0.2, 0.05, 0.15, 0.05, "E",0,1.5, 50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
