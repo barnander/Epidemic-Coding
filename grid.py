@@ -10,49 +10,75 @@ import matplotlib.pyplot as plt
 import random
 import matplotlib.animation as animation
 import matplotlib.colors as colors
-import argparse
+# <<<<<<< HEAD
+# import argparse
 
-parser=argparse.ArgumentParser(description='How each value changes the sim')
-parser.add_argument('--Size',metavar='N',type=int,default=50,
-                       help='Use a grid of size N x N')
-parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
-                        help='Chance of infection each day when in range of an infected individual ')
-parser.add_argument('--Range',metavar='N',type=int,default=2,
-                        help='How far the virus can jump from person to person within the grid')
-parser.add_argument('--Rec',metavar='p',type=float,default=0.3,
-                        help='Chance to recover each day you are infected ')
-parser.add_argument('--Death',metavar='p',type=float,default=0.005,
-                        help='Chance of an infetced individual to die each day')
-parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
-                    help='Chance for an infected individual to be hospitalised')
-parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
-                    help='percentage of total population that can be hospitalised before capacity is reached')
-parser.add_argument('--Hosprec',metavar='p',type=float,default=0.3,
-                    help='recovery rate when hospitialied')
-parser.add_argument('--Duration',metavar='T',type=int,default=50,
-                    help='set the duration of the sim to time T')
-
-args=parser.parse_args()
+# def init(*args):
+#     parser=argparse.ArgumentParser(description='create sim animation')
+#     parser.add_argument('--size,',metavar='N',type=int,default=25,
+#                        help='Use a grid of size N x N')
+#     parser.add_argument('--Duration',metavar='T',type=int,default=50,
+#                         help='Set the lenght of time simutlated')
+#     parser.add_argument('--Rec',metavar='p',type=float,default=0.1,
+#                         help='Chance of recovery per day')
+#     parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
+#                         help='Chance for be infected when in range')
+#     parser.add_argument('--Spread',metavar='D',type=int,default=2,
+#                         help='infection can jump a distance of D away from a case')
+#     parser.add_argument('--plot',action='store_true',
+#                         help='provides a plot instead of animation')
+#     parser.add_argument('--file',metavar='n',type=str,default=None,
+#                         help='give the name to a file to save instead of display')
+#     args=parser.parse_args(args)
+#     anim=grid_animation(main(args.size,args.Inf,args.Spread,args.Rec,args.Duration))
     
-
-
+    
+    
+# =======
 import pandas as pd
 
-def original_grid(n):
-    row = ["S" for i in range(n)]
-    grid = np.array([row for i in range(n)])
+# >>>>>>> 8833a6aa952a66e6ae755288be0a0a5a05e6a475
+
+class Individual:
+    def __init__(self, inf_status, age, vacc_status):
+        self.inf_status = inf_status
+        self.age = age
+        self.vacc_status = vacc_status
+
+        
+    def __str__(self):
+        return self.inf_status
+    
+    def __repr__(self):
+        return self.inf_status[0]
+        
+def original_grid(n, pop_structure, vacc_percentage):
+    ages = ['C','Y','M','O']
+    vacc_statuses = [0, 1]
+    if pop_structure == "E":
+        grid = np.array([[Individual("S", random.choices(ages, [0.4,0.3,0.2,0.1]), random.choices(vacc_statuses, [1-vacc_percentage, vacc_percentage])[0]) for i in range(n)] for i in range(n)])
+    elif pop_structure == "C":
+        grid = np.array([[Individual("S", random.choices(ages, [0.1,0.2,0.3,0.4]), random.choices(vacc_statuses, [1-vacc_percentage, vacc_percentage])[0]) for i in range(n)] for i in range(n)])
+    
+    elif pop_structure == "S":
+        grid = np.array([[Individual("S", random.choice(ages), random.choices(vacc_statuses, [1-vacc_percentage, vacc_percentage])[0]) for i in range(n)] for i in range(n)])
+    for row in grid:
+        for person in row:
+            person.age = person.age[0]
     i = random.randint(0,n-1)
     j = random.randint(0, n-1)
-    grid[i,j] = 'I'
-    intgrid=np.zeros((n,n),dtype=int)
-    return grid#,intgrid
+    grid[i,j].inf_status = 'I0'
+    
+    return grid
+
+
 def in_range(square, radius,allowed_coords):
     affected_squares = []
     x = square[0]
     y = square[1]
     affected_squares = [[x+i,y+j] for i in range(-radius,radius+1) for j in range(-radius,radius+1)]
     affected_squares = [i for i in affected_squares if allowed_coords.count(i)]
-    affected_squares.remove(square)
+    # affected_squares.remove(square)
     return affected_squares
 
 def grid_search(grid, letter):
@@ -60,7 +86,7 @@ def grid_search(grid, letter):
     pos_letter = []
     for i in range(n):
         for j in range(n):
-            if grid[i,j] == letter:
+            if grid[i,j].inf_status[0] == letter:
                 pos_letter.append([i,j])
     return pos_letter
     
@@ -70,18 +96,19 @@ def integer_grid(grid):
     n = len(grid)
     intgrid=np.zeros((n,n),dtype=int)  
     for counter1,row in enumerate(grid):
-        for counter2,letter in enumerate(row):
-           
-            if letter=='I':
+        counter2 = 0
+        for i in row: 
+            if i.inf_status[0] =='I':
                 intgrid[counter1,counter2]=1
-            elif letter=='R':
+            elif i.inf_status[0] =='R':
                 intgrid[counter1,counter2]=2
-            elif letter == 'D':
+            elif i.inf_status[0] == 'D':
                 intgrid[counter1,counter2] = 3
-            elif letter=='H':
+            elif i.inf_status[0] =='H':
                 intgrid[counter1,counter2]=4
             else:
                 intgrid[counter1,counter2]=0
+            counter2 += 1
     return intgrid
 
 
@@ -110,117 +137,87 @@ def prob(inf_rate):
    else:
        return True
     
-def infect(grid, inf_rate, inf_range, infected_list):
-    n = len(grid)
-    allowed_coords = [[i,j] for i in range(n) for j in range(n)]
-    for infected in infected_list:
-        contacts = in_range(infected, inf_range, allowed_coords)
-        contacts = [i for i in contacts if grid[i[0],i[1]] == 'S']
-        for i in contacts:
-            if prob(inf_rate):
-                grid[i[0],i[1]] = 'I'
-    return grid  
-def demographic_grid(n,pop_structure):
-    demographic_grid=np.zeros((n,n),dtype=str)
-    if pop_structure=='expansive':
-        list_choice=['C','C','C','C','Y','Y','Y','M','M','O']
-    elif pop_structure=='constrictive':
-        list_choice=['C','Y','Y','M','M','M','O','O','O','O']
-    elif pop_structure=='stationary':
-        list_choice=['C','Y','M','O']
-    for counter1,row in enumerate(demographic_grid):
-        for counter2,letter in enumerate(row):
-            demographic_grid[counter1,counter2]=random.choice(list_choice)
-    return demographic_grid
+    
+def infect(susceptible, grid, inf_rate, vacc_protection):
+    ages = ["C", "Y", "M", "O"]
+    inf_rates = [inf_rate * 2**i/4 for i in range(0,4)]   
+    inf_rates = {key:value for (key,value) in zip(ages, inf_rates)}
+    for sus in susceptible:
+        age = grid[sus[0],sus[1]].age
+        vacc_status = grid[sus[0],sus[1]].vacc_status
+        status = grid[sus[0],sus[1]].inf_status
+        if status == "S":
+            if  vacc_status:
+                if prob(inf_rates[age[0]]/vacc_protection):
+                    grid[sus[0],sus[1]].inf_status = "I0"
+            else:
+                if prob(inf_rates[age[0]]):
+                    grid[sus[0],sus[1]].inf_status = "I0"
+    return grid
+
+def age_change(coord, grid, change_rates, resultant_change):
+    age = grid[coord[0],coord[1]].age
+    if prob(change_rates[age[0]]):
+        grid[coord[0],coord[1]].inf_status = resultant_change
+    return grid
 
 
-def main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration):
-    keys = [f'[{i}, {j}]' for i in range(n) for j in range(n)]
-    values = [-1 for i in range(n**2)]
-    inf_track = {key:value for (key,value) in zip(keys,values)}
-    grid = original_grid(n)
-    demographic_grid2=demographic_grid(n,pop_structure)
-    # print(demographic_grid2)
-    # print(grid)
+def main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure, protection, duration):
+    grid = original_grid(n,pop_structure, 0)    
+    print(grid)
+    print(grid[0][0].age)
     grid_list=[integer_grid(grid)]
     hosp_capacity=percent_hosp_capacity*(n**2)
     hosp_overwhelm_days=0
     hod=0
-    child_rec_rate=(2*rec_rate)
-    child_death_rate=(1/4*death_rate)
-    mid_rec_rate=(1/2*rec_rate)
-    mid_death_rate=(2*death_rate)
-    old_rec_rate=(1/4*rec_rate)
-    old_death_rate=(4*death_rate)
-    
-    for i in range(duration):
+    allowed_coords = [[i,j] for i in range(n) for j in range(n)]
+    ages = ["C", "Y", "M", "O"]
+    hosp_rates = [hosp_rate * 2**i/4 for i in range(0,4)]
+    death_rates = [death_rate * 2**i/4 for i in range(0,4)]
+    rec_rates = [rec_rate * 4/(2*i) for i in range(1,5)]
+    rec_rates = {key:value for (key,value) in zip(ages, rec_rates)}
+    death_rates = {key:value for (key,value) in zip(ages, death_rates)}
+    hosp_rates = {key:value for (key,value) in zip(ages, hosp_rates)}
+    for time in range(duration):
+        ho_death = False
+        j=0
+        susceptible = []
+        for row in grid:
+            i = 0
+            for person in row:
+                if person.inf_status[0] == "I":
+                    affected = in_range([j,i], inf_range, allowed_coords)
+                    #print(affected)
+                    for sus in affected:
+                        susceptible.append(sus)
+                    if int(person.inf_status[1]) > 2:
+                        print(len(grid_search(grid, "H")))
+                        if len(grid_search(grid, "H")) >= hosp_capacity:
+                            
+                            
+                            grid[j,i].inf_status = "D"
+                            hod += 1
+                            ho_death = True
+                        else:
+                            grid = age_change([j,i], grid, hosp_rates, "H")
+                            grid = age_change([j,i], grid, rec_rates, "R")
+                    else:
+                        person.inf_status = "I" + str(int(person.inf_status[1]) + 1)
+                elif person.inf_status[0] == "H":
+                    grid = age_change([j,i], grid, death_rates, "D")
+                    grid = age_change([j,i], grid, rec_rates, "R")
+                   
+                i += 1
+            j += 1
+        if ho_death:
+            hosp_overwhelm_days +=1
+        grid = infect(susceptible,grid, inf_rate, protection )
+        grid_list.append(integer_grid(grid))
         
-        infected_list = grid_search(grid, 'I')  
-        hosp_list = grid_search(grid, 'H')
-        if len(hosp_list)>hosp_capacity:
-            hosp_overwhelm_days+=1
-            print('Hospitals were Overwhelmed on day ',i, ' with ',len(hosp_list), 'requiring hospitalisation')
-            
-        for infected_pos in infected_list:
-            # print(infected_pos)
-            # print(demographic_grid2[infected_pos[0],infected_pos[1]])
-            if demographic_grid2[infected_pos[0],infected_pos[1]]=='C':
-                rec_rate=child_rec_rate
-                death_rate=child_death_rate
-            elif demographic_grid2[infected_pos[0],infected_pos[1]] =='M':
-                rec_rate=mid_rec_rate
-                death_rate=mid_death_rate
-
-            elif demographic_grid2[infected_pos[0],infected_pos[1]] =='O':
-                rec_rate=old_rec_rate
-                death_rate=old_death_rate
-            
-        #     if inf_track[str(infected_pos)] == -1:
-        #         inf_time = random.randint(inf_min, inf_max)
-        #         inf_track[str(infected_pos)] = inf_time~
-            
-        #     elif inf_track[str(infected_pos)] == 0:
-        #         grid[infected_pos[0],infected_pos[1]] = 'R' 
-        #         infected_list.remove(infected_pos)
-        #     else:
-        #         inf_track[str(infected_pos)] -= 1
-        # print(inf_track)
-            if prob(rec_rate):
-                grid[infected_pos[0],infected_pos[1]] = 'R' 
-            elif prob(hosp_rate):
-                grid[infected_pos[0],infected_pos[1]] = 'H' 
-            # elif prob(death_rate):
-            #     grid[infected_pos[0],infected_pos[1]] = 'D' 
-        for counter,hosp_pos in enumerate(hosp_list):
-            if (counter+1)>(hosp_capacity):
-                # print(counter, 'counter')
-                # print(hops)
-                # print('Hospitals were overwhelmed on day',i, 'with ', len(hosp_list), 'requiring hospitalisation')
-                grid[hosp_pos[0],hosp_pos[1]] = 'D' 
-                hod+=1
-            else:
-                if prob(death_rate):
-                    grid[hosp_pos[0],hosp_pos[1]] = 'D'
-                elif prob(hosp_rec_rate):
-                    grid[hosp_pos[0],hosp_pos[1]] = 'R'
-                    
-                
-                
-        infected_list = grid_search(grid, 'I')
-        grid = infect(grid, inf_rate, inf_range, infected_list)
-        numbergrid=integer_grid(grid)
-        grid_list.append(numbergrid)
-        # print(grid)
-        # print(grid)
     print('Hospitals were overwhelmed for a total of', hosp_overwhelm_days,'days causing', hod, 'people to die because of lack of hospitalisation')
-    inf_data=[]
-    rec_data=[]
-    suc_data=[]
-    for grid in grid_list:
-        inf_data.append(len(grid_search(grid, 'I')))
-        rec_data.append(len(grid_search(grid, 'R')))
-        suc_data.append(len(grid_search(grid, 'S')))
     return grid_list
+    
+
 
 def grid_count_list(grid_list):
     grid_count_inf_list=grid_count(1,grid_list)
@@ -247,6 +244,9 @@ def plot_show(list_of_infections):
     fig, (axs1,axs2) =plt.subplots(1,2,figsize = (15,5),num=1)
     peak_inf=max(list_of_infections[0])
     index=list_of_infections[0].index(peak_inf)
+    list1=["A peak of " + str(peak_inf) +" infections", "occurred on day " + str(index)]
+    joined="\n".join(list1)
+    axs2=plt.annotate(joined,(index,peak_inf),(-1,(peak_inf + list_of_infections[1][1]/10)),arrowprops=dict(arrowstyle='->',relpos=(0.5,0.)),bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="r", lw=1))
     print('The peak number of infections was', peak_inf, 'and occured on day', index)
     axs2=plt.xlabel('Day(D)')
     axs2=plt.ylabel('Number of People')
@@ -275,19 +275,21 @@ def plot_show(list_of_infections):
 
 
 
-if __name__ == "__main__":
-    n = args.Size
-    inf_rate = args.Inf
-    inf_range = args.Range
-    rec_rate = args.Rec
-    death_rate = args.Death
-    hosp_rate = args.Hosprate
-    percent_hosp_capacity = args.Hospcap
-    hosp_rec_rate= args.Hosprec
-    pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
-    duration= args.Duration
-    grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
-    anim=grid_animation(grid_list)
-    plot_show(grid_count_list(grid_list))
+#if __name__ == "__main__":
+    # n = int(input("Side length for square grid: "))
+    # inf_rate = float(input('Infection Rate: '))
+    # inf_range = int((input('Infection Range: ')))
+    # rec_rate = float(input("Recovery Rate: "))
+    # death_rate = float(input('Death Rate: '))
+    # hosp_rate = float(input("Hospital Rate of Infected: "))
+    # percent_hosp_capacity = float(input("Hospital Capacity as a percentage of total population: "))
+    # hosp_rec_rate= float(input("Recovery rate of infected patients in hospital: "))
+    # pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
+    # duration= int(input("Time of simulation: "))
+    # grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
+    # anim=grid_animation(grid_list)
+    # plot_show(grid_count_list(grid_list))
 
-
+grid_list = main(30, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",1.5, 50)
+anim=grid_animation(grid_list)
+plot_show(grid_count_list(grid_list))
