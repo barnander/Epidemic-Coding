@@ -13,7 +13,7 @@ import matplotlib.colors as colors
 
 parser=argparse.ArgumentParser(description='How each value changes the sim')
 parser.add_argument('--Size',metavar='N',type=int,default=50,
-                       help='Use a grid of size N x N')
+                        help='Use a grid of size N x N')
 parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
                         help='Chance of infection each day when in range of an infected individual ')
 parser.add_argument('--Range',metavar='N',type=int,default=2,
@@ -26,8 +26,8 @@ parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
                     help='Chance for an infected individual to be hospitalised')
 parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
                     help='percentage of total population that can be hospitalised before capacity is reached')
-parser.add_argument('--Hosprec',metavar='p',type=float,default=0.3,
-                    help='recovery rate when hospitialied')
+parser.add_argument('--Duration',metavar='T',type=int,default=50,
+                    help='set the duration of the sim to time T')
 parser.add_argument('--Duration',metavar='T',type=int,default=50,
                     help='set the duration of the sim to time T')
 
@@ -35,7 +35,7 @@ args=parser.parse_args()
 
 import pandas as pd
 
-# >>>>>>> 8833a6aa952a66e6ae755288be0a0a5a05e6a475
+
 
 class Individual:
     def __init__(self, inf_status, age, vacc_status):
@@ -50,7 +50,25 @@ class Individual:
     def __repr__(self):
         return self.inf_status[0]
         
-def original_grid(n, pop_structure, vacc_percentage):
+def original_grid(n, pop_structure, vacc_percentage, inf_start):
+    """
+    
+
+    Parameters
+    ----------
+    n : Integer
+    length of square population grid
+    pop_structure : String
+        describes the distribution of age within the population
+    vacc_percentage : Float
+        percent of the population which is vaccinated
+
+    Returns
+    -------
+    grid : np array
+        grid including  the desired amount of infected individuals 
+
+    """
     ages = ['C','Y','M','O']
     vacc_statuses = [0, 1]
     if pop_structure == "E":
@@ -63,9 +81,10 @@ def original_grid(n, pop_structure, vacc_percentage):
     for row in grid:
         for person in row:
             person.age = person.age[0]
-    i = random.randint(0,n-1)
-    j = random.randint(0, n-1)
-    grid[i,j].inf_status = 'I0'
+    for x in range(inf_start):
+        i = random.randint(0,n-1)
+        j = random.randint(0, n-1)
+        grid[i,j].inf_status = 'I0'
     
     return grid
 
@@ -160,8 +179,8 @@ def age_change(coord, grid, change_rates, resultant_change):
     return grid
 
 
-def main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration):
-    grid = original_grid(n,pop_structure, vacc_percentage)    
+def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration):
+    grid = original_grid(n,pop_structure, vacc_percentage,inf_start)    
     print(grid)
     print(grid[0][0].age)
     grid_list=[integer_grid(grid)]
@@ -281,13 +300,14 @@ if __name__ == "__main__":
     death_rate = args.Death
     hosp_rate = args.Hosprate
     percent_hosp_capacity = args.Hospcap
-    hosp_rec_rate= args.Hosprec
-    pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
+    pop_structure= input("Population demographic ('S', 'C' or 'E'): ")
+    vacc_percentage = args.vaccperc
+    protection = args.portection
     duration= args.Duration
     grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, duration)
     anim=grid_animation(grid_list)
     plot_show(grid_count_list(grid_list))
 
-grid_list = main(30, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",1.5, 50)
+grid_list = main(30,2, 0.3, 2, 0.2, 0.05, 0.03, 0.1, "E",0,1.5, 50)
 anim=grid_animation(grid_list)
 plot_show(grid_count_list(grid_list))
