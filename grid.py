@@ -192,16 +192,50 @@ def grid_animation(grid_list):
     return anim
     
 def prob(inf_rate):
+    """
+    
 
-   limit = int(1000*inf_rate)
-   number = random.randint(1, 1000) 
-   if number > limit :
+    Parameters
+    ----------
+    inf_rate : Float
+        chance of infection from contact with infected person
+
+    Returns
+    -------
+    bool
+        true is returned at a rate equivalent to the infection rate
+
+    """
+
+    limit = int(10000*inf_rate)
+    number = random.randint(1, 10000) 
+    if number > limit :
        return False
-   else:
+    else:
        return True
     
     
 def infect(susceptible, grid, inf_rate, vacc_protection):
+    """
+    
+
+    Parameters
+    ----------
+    susceptible : List
+        Coordinates of people in contact with infected people ()
+    grid : TYPE
+        DESCRIPTION.
+    inf_rate : TYPE
+        DESCRIPTION.
+    vacc_protection : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    grid : TYPE
+        DESCRIPTION.
+
+    """
     ages = ["C", "Y", "M", "O"]
     inf_rates = [inf_rate * 2**i/4 for i in range(0,4)]   
     inf_rates = {key:value for (key,value) in zip(ages, inf_rates)}
@@ -226,6 +260,44 @@ def age_change(coord, grid, change_rates, resultant_change):
 
 
 def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection, immunity, duration):
+    """
+    
+
+    Parameters
+    ----------
+    n : Integer
+        side length of square grid
+    inf_start : Integer
+        Number of infected individuals on the first day
+    inf_rate : Float
+        Chance that a susceptible person gets infected 
+    inf_range : Integer
+        distance from infected person someone can get infected from
+    rec_rate : Float
+        DESCRIPTION.
+    death_rate : TYPE
+        DESCRIPTION.
+    hosp_rate : TYPE
+        DESCRIPTION.
+    percent_hosp_capacity : TYPE
+        DESCRIPTION.
+    pop_structure : TYPE
+        DESCRIPTION.
+    vacc_percentage : TYPE
+        DESCRIPTION.
+    protection : TYPE
+        DESCRIPTION.
+    immunity : TYPE
+        DESCRIPTION.
+    duration : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    grid_list : TYPE
+        DESCRIPTION.
+
+    """
     grid = original_grid(n,pop_structure, vacc_percentage,inf_start)    
 #    print(grid)
 #    print(grid[0][0].age)
@@ -254,7 +326,6 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
                     for sus in affected:
                         susceptible.append(sus)
                     if int(person.inf_status[1]) > 2:
-#                        print(len(grid_search(grid, "H")))
                         if len(grid_search(grid, "H")) >= hosp_capacity:
                             if prob(2*death_rates[grid[j,i].age]):
                                 grid[j,i].inf_status = "D"
