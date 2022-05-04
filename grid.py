@@ -29,6 +29,8 @@ parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
                     help='percentage of total population that can be hospitalised before capacity is reached')
 parser.add_argument('--Hosprec',metavar='p',type=float,default=0.3,
                     help='recovery rate when hospitialied')
+parser.add_argument('--Demo',metavar='d',default='stationary',
+                    help='Choose what population demographic is simulated, stationary, constrictive, expansive')
 parser.add_argument('--Duration',metavar='T',type=int,default=50,
                     help='set the duration of the sim to time T')
 
@@ -284,7 +286,7 @@ if __name__ == "__main__":
     hosp_rate = args.Hosprate
     percent_hosp_capacity = args.Hospcap
     hosp_rec_rate= args.Hosprec
-    pop_structure= input("Population demographic ('stationary', 'constrictive' or 'expansive'): ")
+    pop_structure= args.Demo
     duration= args.Duration
     grid_list=main(n, inf_rate, inf_range, rec_rate, death_rate,hosp_rate,percent_hosp_capacity,hosp_rec_rate,pop_structure, duration)
     anim=grid_animation(grid_list)
