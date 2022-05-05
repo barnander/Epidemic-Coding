@@ -15,7 +15,7 @@ def arg(parser):
     
     parser.add_argument('--Size',metavar='N',type=int,default=40,
                             help='Use a grid of size N x N')
-    parser.add_argument('--Start',metavar='N',type=int,default=3,
+    parser.add_argument('--Start',metavar='N',type=int,default=2,
                         help='The number of initial infected at the start of the sim ')
     parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
                             help='Chance of infection each day when in range of an infected individual, give a value between 0 and 1 ')
