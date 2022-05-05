@@ -235,31 +235,36 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
     hosp_rates = {key:value for (key,value) in zip(ages, hosp_rates)}
     for time in range(duration):
         ho_death = False
-        j=0
+        row_no=0
         susceptible = []
         for row in grid:
-            i = 0
+            collumn_no = 0
             for person in row:
                 if person.inf_status[0] == "I":
-                    affected = in_range([j,i], inf_range, allowed_coords)
+                    affected = in_range([row_no,collumn_no], inf_range, allowed_coords)
                     #print(affected)
                     for sus in affected:
                         susceptible.append(sus)
                     if int(person.inf_status[1]) > 2:
                         if len(grid_search(grid, "H")) >= hosp_capacity:
-                            if prob(2*death_rates[grid[j,i].age]):
-                                grid[j,i].inf_status = "D"
+                            if prob(2*death_rates[person.age]):
+                                person.inf_status = "D"
                                 hod += 1
                                 ho_death = True
                         else:
-                            grid = age_change([j,i], grid, hosp_rates, "H")
-                            grid = age_change([j,i], grid, rec_rates, "R0")
+                            new_statuses = [person.inf_status,"H", "R0"]
+                            chance = [1-(hosp_rates[person.age] + rec_rates[person.age]),hosp_rates[person.age], rec_rates[person.age]]
+                            new_status = random.choices(new_statuses, chance )[0]
+                            person.inf_status = new_status
+
                     else:
                         person.inf_status = "I" + str(int(person.inf_status[1]) + 1)
                 elif person.inf_status[0] == "H":
-                    grid = age_change([j,i], grid, death_rates, "D")
-                    grid = age_change([j,i], grid, rec_rates, "R0")
-                
+                    new_statuses = [person.inf_status,"D", "R0"]
+                    chance = [1-(death_rates[person.age] + rec_rates[person.age]),death_rates[person.age], rec_rates[person.age]]
+                    new_status = random.choices(new_statuses, chance )[0]
+                    person.inf_status = new_status
+
                 
                 elif person.inf_status[0] == "R":
                     if int(person.inf_status[1]) > immunity:
@@ -269,8 +274,8 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
                         person.inf_status = "R" + str(int(person.inf_status[1]) + 1)
                     
                    
-                i += 1
-            j += 1
+                collumn_no += 1
+            row_no += 1
         if ho_death:
             hosp_overwhelm_days +=1
         grid = infect(susceptible,grid, inf_rate, protection )
