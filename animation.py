@@ -41,4 +41,17 @@ def grid_animation(grid_list):
     fig = plt.figure(2)
     anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list),fargs=(grid_list,grid_list[0],), interval = 600,repeat=False)
     return anim
+
+def inst_anim(grid_list,time):
+    fig = plt.figure(3)
+    cols=len(grid_list[0][0])
+    rows=len(grid_list[0][1])
+    brg=colors.ListedColormap(['blue','red','green','black','cyan'])
+    bounds=[0,1,2,3,4,5]
+    norm = colors.BoundaryNorm(bounds, brg.N)
+    im = plt.imshow(grid_list[0],cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
+    plt.axis('off')
+    im.set_array(grid_list[time])
+    return
     
+inst_anim(grid_list,8)

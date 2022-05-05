@@ -9,6 +9,7 @@ from animation import grid_animation
 import argparse
 from plot import arg
 
+
 parser=argparse.ArgumentParser(description='How each value changes the sim')
 args=arg(parser)
 
@@ -72,6 +73,8 @@ if __name__ == "__main__":
     grid_list=main(n, inf_start,inf_rate,inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection,immunity, duration)
     anim=grid_animation(grid_list)
     plot_show(grid_list)
+
+
 
 
 
