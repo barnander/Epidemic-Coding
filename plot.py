@@ -33,9 +33,9 @@ def arg(parser):
                         help='proportion of total population that can be hospitalised before capacity is reached, give a value between 0 and 1')
     parser.add_argument('--Demo',metavar='d',default='S',choices=['S','C','E'],
                         help='Choose what population demographic is simulated, stationary"s", constrictive"c", expansive"e')
-    parser.add_argument('--Vac',metavar='p',type=float,default=0.5,
+    parser.add_argument('--Vac',metavar='p',type=float,default=0.25,
                         help='The total proportion of the population that recieves a vaccine, give a value between 0 and 1')
-    parser.add_argument('--Proc',metavar='p',type=float,default=1.5,
+    parser.add_argument('--Proc',metavar='p',type=float,default=5,
                         help='Set the factor at which the chance of infection is divided by after recieving the vaccine, must be greater than 1')
     parser.add_argument('--Immune',metavar='p',type=int,default=1000,
                         help='the ammount of days that a person remains immune from infection after recovery, after thsi period the become susceptible again')

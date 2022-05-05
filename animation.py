@@ -26,14 +26,14 @@ def integer_grid(grid):
     intgrid=np.zeros((n,n),dtype=int)  
     for counter1,row in enumerate(grid):
         counter2 = 0
-        for i in row: 
-            if i.inf_status[0] =='I':
+        for square in row: 
+            if square.inf_status[0] =='I':
                 intgrid[counter1,counter2]=1
-            elif i.inf_status[0] =='R':
+            elif square.inf_status[0] =='R':
                 intgrid[counter1,counter2]=2
-            elif i.inf_status[0] == 'D':
+            elif square.inf_status[0] == 'D':
                 intgrid[counter1,counter2] = 3
-            elif i.inf_status[0] =='H':
+            elif square.inf_status[0] =='H':
                 intgrid[counter1,counter2]=4
             else:
                 intgrid[counter1,counter2]=0
@@ -93,7 +93,6 @@ def grid_animation(grid_list):
     """
     fig = plt.figure(2)
     anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list),fargs=(grid_list,grid_list[0],), interval = 600,repeat=False)
-    print(type(anim))
     return anim
 
 def inst_anim(grid_list,time):
