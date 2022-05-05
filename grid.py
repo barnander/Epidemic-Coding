@@ -1,53 +1,12 @@
-#!usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-Created on Tue Mar 22 13:11:22 2022
+Created on Thu May  5 14:05:16 2022
+
 @author: Basil
 """
-
-import sys
 import numpy as np
-import matplotlib.pyplot as plt
 import random
-import matplotlib.animation as animation
-import matplotlib.colors as colors
-import argparse
-
-parser=argparse.ArgumentParser(description='How each value changes the sim')
-parser.add_argument('--Size',metavar='N',type=int,default=30,
-                        help='Use a grid of size N x N')
-parser.add_argument('--Start',metavar='N',type=int,default=1,
-                    help='The number of initial infected at the start of the sim ')
-parser.add_argument('--Inf',metavar='p',type=float,default=0.3,
-                        help='Chance of infection each day when in range of an infected individual, must be a value between 0 and 1')
-parser.add_argument('--Range',metavar='N',type=int,default=2,
-                        help='How far the virus can jump from person to person within the grid')
-parser.add_argument('--Rec',metavar='p',type=float,default=0.3,
-                        help='Chance to recover each day you are infected ')
-parser.add_argument('--Death',metavar='p',type=float,default=0.005,
-                        help='Chance of an infetced individual to die each day, must be a value between 0 and 1')
-parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
-                    help='Chance for an infected individual to be hospitalised, must be a value between 0 and 1')
-parser.add_argument('--Hospcap',metavar='%',type=float,default=0.3,
-                    help='proportion of total population that can be hospitalised before capacity is reached, must be a vlaue between 0 and 1')
-parser.add_argument('--Demo',metavar='d',default='S',choices=['S','C','E'],
-                    help='Choose what population demographic is simulated, stationary"s", constrictive"c", expansive"e')
-parser.add_argument('--Vac',metavar='p',type=float,default=0.5,
-                    help='The total proportion of the population that recieves a vaccine, must be a value between 0 and 1')
-parser.add_argument('--Proc',metavar='p',type=float,default=1.5,
-                    help='Set the factor at which the chance of infection is divided by after recieving the vaccine, must be greater than 1')
-parser.add_argument('--Immune',metavar='p',type=int,default=10000,
-                    help='the ammount of days that a person remains immune from infection after recovery, after this period the become susceptible again')
-parser.add_argument('--Duration',metavar='T',type=int,default=50,
-                    help='set the duration of the sim to time T')
-parser.add_argument('--File',metavar='n',type=str,default=None,
-                    help='Give a name for the plot and save it instead of displaying')
-
-
-args=parser.parse_args()
-
-import pandas as pd
-
-
+from animation import integer_grid
 
 
 
@@ -153,46 +112,7 @@ def grid_search(grid, letter):
             if grid[i,j].inf_status[0] == letter:
                 pos_letter.append([i,j])
     return pos_letter
-    
 
-
-def integer_grid(grid):
-    n = len(grid)
-    intgrid=np.zeros((n,n),dtype=int)  
-    for counter1,row in enumerate(grid):
-        counter2 = 0
-        for i in row: 
-            if i.inf_status[0] =='I':
-                intgrid[counter1,counter2]=1
-            elif i.inf_status[0] =='R':
-                intgrid[counter1,counter2]=2
-            elif i.inf_status[0] == 'D':
-                intgrid[counter1,counter2] = 3
-            elif i.inf_status[0] =='H':
-                intgrid[counter1,counter2]=4
-            else:
-                intgrid[counter1,counter2]=0
-            counter2 += 1
-    return intgrid
-
-
-def animate_func(i,grid_list,first_grid):
-    fig = plt.figure(2)
-    cols=len(first_grid[0])
-    rows=len(first_grid[1])
-    brg=colors.ListedColormap(['blue','red','green','black','cyan'])
-    bounds=[0,1,2,3,4,5]
-    norm = colors.BoundaryNorm(bounds, brg.N)
-    im = plt.imshow(first_grid,cmap=brg,aspect='auto',interpolation='nearest',extent=[0.5, 0.5+cols, 0.5, 0.5+rows], norm=norm)
-    plt.axis('off')
-    im.set_array(grid_list[i])
-    return [im]
-
-def grid_animation(grid_list):
-    fig = plt.figure(2)
-    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list),fargs=(grid_list,grid_list[0],), interval = 600,repeat=False)
-    return anim
-    
 def prob(inf_rate):
     """
     
@@ -300,9 +220,7 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
         DESCRIPTION.
 
     """
-    grid = original_grid(n,pop_structure, vacc_percentage,inf_start)    
-#    print(grid)
-#    print(grid[0][0].age)
+    grid = original_grid(n,pop_structure, vacc_percentage,inf_start)
     grid_list=[integer_grid(grid)]
     hosp_capacity=percent_hosp_capacity*(n**2)
     hosp_overwhelm_days=0
@@ -360,139 +278,4 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
         
     print('Hospitals were overwhelmed for a total of', hosp_overwhelm_days,'days causing', hod, 'people to die because of lack of hospitalisation')
     return grid_list
-    
 
-
-def grid_count_list(grid_list):
-    grid_count_inf_list=grid_count(1,grid_list)
-    grid_count_sus_list=grid_count(0,grid_list)
-    grid_count_rec_list=grid_count(2,grid_list)
-    grid_count_dea_list=grid_count(3,grid_list)
-    grid_count_hos_list=grid_count(4,grid_list)
-    return grid_count_inf_list,grid_count_sus_list, grid_count_rec_list, grid_count_dea_list,grid_count_hos_list
-
-def grid_count(state,grid_list):
-    grid_count_list=[]
-    for grid in grid_list:
-        grid_count_state=len(grid[grid==state])
-        grid_count_list.append(grid_count_state)
-    return grid_count_list
-
-def plot_show(list_of_infections):
-    x=np.arange(len(list_of_infections[0]))
-    y=np.array(list_of_infections[0])
-    z=np.array(list_of_infections[1])
-    a=np.array(list_of_infections[2])
-    b=np.array(list_of_infections[3])
-    c=np.array(list_of_infections[4])
-    fig, (axs1,axs2) =plt.subplots(1,2,figsize = (15,5),num=1)
-    peak_inf=max(list_of_infections[0])
-    index=list_of_infections[0].index(peak_inf)
-    list1=["A peak of " + str(peak_inf) +" infections", "occurred on day " + str(index)]
-    joined="\n".join(list1)
-    axs2=plt.annotate(joined,(index,peak_inf),(-1,(peak_inf + list_of_infections[1][1]/10)),arrowprops=dict(arrowstyle='->',relpos=(0.5,0.)),bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="r", lw=1))
-    print('The peak number of infections was', peak_inf, 'and occured on day', index)
-    axs2=plt.xlabel('Day(D)')
-    axs2=plt.ylabel('Number of People')
-    axs2=plt.plot(x,y,label='Number of Infected',color='r') 
-    axs2=plt.plot(x,z,label='Number of Susceptible',color='b')
-    axs2=plt.plot(x,a,label='Number of Recovered',color='g')
-    axs2=plt.plot(x,b, label='Number of Dead',color='k')
-    axs2=plt.plot(x,c, label='Number of Hospitalised', color='c')
-    axs2=plt.plot()
-    axs2=plt.title("Population Statistics from Simulation")
-    axs2=plt.legend(loc='center right')
-    axs1.axis('off')
-    stats=np.zeros((5,4),dtype=int)
-    for counter,i in enumerate(list_of_infections):
-        stats[(counter),0]=i[int((len(i)-1)/4)]
-        stats[(counter),1]=i[int((len(i)-1)/2)]
-        stats[(counter),2]=i[int((len(i)-1)*(3/4))]
-        stats[(counter),3]=i[int(len(i)-1)]
-    df = pd.DataFrame(stats, 
-                      columns=['Day '+ str(int((len(list_of_infections[0])-1)/4)),'Day '+ str(int((len(list_of_infections[0])-1)/2)),'Day '+ str(int((len(list_of_infections[0])-1)*(3/4))),'Day '+ str((len(list_of_infections[0])-1))], 
-                      index = [ 'Number of Infected', 'Number of Susceptible', 'Number of Recovered', 'Number of Dead','Number of Hospitalised'])
-    table = axs1.table(cellText=df.values, cellLoc='center',colLabels = df.columns, rowLabels = df.index,  loc='center',colWidths=[0.15,0.15,0.15,0.15])
-    
-    if args.File is None:
-        return plt.show()
-    else:
-        plt.savefig(args.File)
-        
-        
-    
-    
-#    return plt.show()
-
-
-
-if __name__ == "__main__":
-    n = args.Size
-    inf_start=args.Start
-    inf_rate = args.Inf
-    while inf_rate>1:
-        print('please give a value between 0 and 1')
-        inf_rate=float(input('please give an infection rate = '))
-    while inf_rate<0:
-        print('please give a value between 0 and 1')
-        inf_rate=float(input('please give an infection rate = '))
-    inf_range = args.Range
-    rec_rate = args.Rec
-    while rec_rate>1:
-        print('please give a value between 0 and 1')
-        rec_rate=float(input('please give a recovery rate = ' ))
-    while rec_rate<0:
-        print('please give a value between 0 and 1')
-        rec_rate=float(input('please give a recovery rate = ' ))
-    death_rate = args.Death
-    while death_rate>1:
-        print('please give a value between 0 and 1')
-        death_rate=float(input('please give a value for the death rate = '))
-    while death_rate<0:
-        print('please give a value between 0 and 1')
-        death_rate=float(input('please give a value for the death rate = '))
-    hosp_rate = args.Hosprate
-    while hosp_rate>1:
-        print('please give a value between 0 and 1')
-        hosp_rate=float(input('please give a value for chance of hospitilisation = '))
-    while hosp_rate<0:
-        print('please give a value between 0 and 1')
-        hosp_rate=float(input('please give a value for chance of hospitilisation = '))
-    percent_hosp_capacity = args.Hospcap
-    while percent_hosp_capacity>1:
-        print('please give a value between 0 and 1')
-        percent_hosp_capacity=float(input('please give a value for what proportion of the popualation can be hospitilised = '))
-    while percent_hosp_capacity<0:
-        print('please give a value between 0 and 1')
-        percent_hosp_capacity=float(input('please give a value for what proportion of the popualation can be hospitilised = '))
-    pop_structure= args.Demo
-    vacc_percentage = args.Vac
-    while vacc_percentage>1:
-        print('please give a value between 0 and 1')
-        vacc_percentage=float(input('please give a value for the proportion of population vaccinated = '))
-    while vacc_percentage<0:
-        print('please give a value between 0 and 1')
-        vacc_percentage=float(input('please give a value for the proportion of population vaccinated = '))
-    protection = args.Proc
-    while protection<1:
-        print('please give a value greater than 1')
-        protection=float(input('please give a value for the factor that infection rate is reduced by when vaccinated = '))
-    immunity=args.Immune
-    duration = args.Duration
-    grid_list=main(n, inf_start,inf_rate,inf_range, rec_rate, death_rate, hosp_rate,percent_hosp_capacity,pop_structure,vacc_percentage, protection,immunity, duration)
-    anim=grid_animation(grid_list)
-    plot_show(grid_count_list(grid_list))
-
-
-# =============================================================================
-# if args.File is None:
-#     plot_show(grid_count_list(grid_list))
-# else:
-#    plt.savefig(args.File)
-# =============================================================================
-
-
-#grid_list = main(30,2, 0.3, 2, 0.2, 0.05, 0.15, 0.05, "E",0,1.5, 50)
-
-#anim=grid_animation(grid_list)
-#plot_show(grid_count_list(grid_list))
