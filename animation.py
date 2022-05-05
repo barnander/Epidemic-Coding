@@ -39,6 +39,6 @@ def animate_func(i,grid_list,first_grid):
 
 def grid_animation(grid_list):
     fig = plt.figure(2)
-    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list),fargs=(grid_list,grid_list[0],), interval = 600,repeat=False)
+    anim = animation.FuncAnimation(fig, animate_func, frames = len(grid_list),fargs=(grid_list,grid_list[0],), interval = 600)
     return anim
     
