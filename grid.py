@@ -39,6 +39,8 @@ parser.add_argument('--Immune',metavar='p',type=int,default=10000,
                     help='the ammount of days that a person remains immune from infection after recovery, after this period the become susceptible again')
 parser.add_argument('--Duration',metavar='T',type=int,default=50,
                     help='set the duration of the sim to time T')
+parser.add_argument('--File',metavar='n',type=str,default=None,
+                    help='Give a name for the plot and save it instead of displaying')
 
 
 args=parser.parse_args()
@@ -412,8 +414,15 @@ def plot_show(list_of_infections):
                       index = [ 'Number of Infected', 'Number of Susceptible', 'Number of Recovered', 'Number of Dead','Number of Hospitalised'])
     table = axs1.table(cellText=df.values, cellLoc='center',colLabels = df.columns, rowLabels = df.index,  loc='center',colWidths=[0.15,0.15,0.15,0.15])
     
+    if args.File is None:
+        return plt.show()
+    else:
+        plt.savefig(args.File)
+        
+        
     
-    return plt.show()
+    
+#    return plt.show()
 
 
 
@@ -474,6 +483,13 @@ if __name__ == "__main__":
     anim=grid_animation(grid_list)
     plot_show(grid_count_list(grid_list))
 
+
+# =============================================================================
+# if args.File is None:
+#     plot_show(grid_count_list(grid_list))
+# else:
+#    plt.savefig(args.File)
+# =============================================================================
 
 
 #grid_list = main(30,2, 0.3, 2, 0.2, 0.05, 0.15, 0.05, "E",0,1.5, 50)
