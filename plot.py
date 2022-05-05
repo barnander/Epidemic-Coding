@@ -15,7 +15,7 @@ def arg(parser):
     
     parser.add_argument('--Size',metavar='N',type=int,default=40,
                             help='Use a grid of size N x N')
-    parser.add_argument('--Start',metavar='N',type=int,default=3,
+    parser.add_argument('--Start',metavar='N',type=int,default=2,
                         help='The number of initial infected at the start of the sim ')
     parser.add_argument('--Inf',metavar='p',type=float,default=0.2,
                             help='Chance of infection each day when in range of an infected individual, give a value between 0 and 1 ')
@@ -37,7 +37,11 @@ def arg(parser):
                         help='Set the factor at which the chance of infection is divided by after recieving the vaccine, must be greater than 1')
     parser.add_argument('--Immune',metavar='p',type=int,default=1000,
                         help='the ammount of days that a person remains immune from infection after recovery, after thsi period the become susceptible again')
+<<<<<<< Updated upstream
     parser.add_argument('--Duration',metavar='T',type=int,default=40,
+=======
+    parser.add_argument('--Duration',metavar='T',type=int,default=30,
+>>>>>>> Stashed changes
                         help='set the duration of the sim to time T')
     parser.add_argument('--File',metavar='n',type=str,default=None,
                         help='give a name for the file to be saved under instead of displaying')
