@@ -22,6 +22,18 @@ class Individual:
     
     def __repr__(self):
         return self.inf_status[0]
+    
+def age_print(grid):
+    for row in grid:
+        for person in row:
+            print(person.age, end = " ")
+        print('\n')
+        
+def vac_print(grid):
+    for row in grid:
+        for person in row:
+            print(person.vacc_status, end = " ")
+        print('\n')
         
 def original_grid(n, pop_structure, vacc_percentage, inf_start):
     """
@@ -283,4 +295,5 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,perce
         
     print('Hospitals were overwhelmed for a total of', hosp_overwhelm_days,'days causing', hod, 'people to die because of lack of hospitalisation')
     return grid_list
+
 
