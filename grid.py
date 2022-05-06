@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu May  5 14:05:16 2022
@@ -265,8 +266,10 @@ def main(n,inf_start, inf_rate, inf_range, rec_rate, death_rate, hosp_rate,frac_
                         susceptible.append(sus)
                     if int(person.inf_status[1]) > 2:
                         if len(grid_search(grid, "H")) >= hosp_capacity:
-                            if prob(2*death_rates[person.age]):
-                                person.inf_status = "D"
+                            new_statuses = [person.inf_status,"D", "R0"]
+                            chance = [1-(death_rates[person.age] + rec_rates[person.age]),2* death_rates[person.age], rec_rates[person.age]]
+                            person.inf_status = random.choices(new_statuses, chance )[0]
+                            if person.inf_status == "D":
                                 hod += 1
                                 ho_death = True
                         else:

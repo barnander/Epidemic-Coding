@@ -29,7 +29,7 @@ def arg(parser):
                             help='Chance of an infetced individual to die each day, give a value between 0 and 1')
     parser.add_argument('--Hosprate',metavar='p',type=float,default=0.1,
                         help='Chance for an infected individual to be hospitalised, give a value between 0 and 1')
-    parser.add_argument('--Hospcap',metavar='%',type=float,default=0.2,
+    parser.add_argument('--Hospcap',metavar='%',type=float,default=0.05,
                         help='proportion of total population that can be hospitalised before capacity is reached, give a value between 0 and 1')
     parser.add_argument('--Demo',metavar='d',default='S',choices=['S','C','E'],
                         help='Choose what population demographic is simulated, stationary"s", constrictive"c", expansive"e')
