@@ -1,7 +1,9 @@
 # Epidemic-Coding
 The code is run through the terminal using $python simulation.py, this will return both the plots created by the code and also a moving day by day heat map of how the virus has spread through the simulated population.
 
-Before running the code make sure that you have matplotlib and matlab installed, otherwise you will run into errors when trying to run the code from the terminal.
+Before running the code make sure that you have matplotlib, numpy, pandas and random installed, otherwise you will run into errors when trying to run the code from the terminal.
+
+Additionally, you may need to reinstall these packages if they haven't been installed correctly. If you run into errors from numpy, firstly run '$python -m pip install numpy', to check if you have it installed. If you have it installed, run '$python -m uninstall numpy' to uninstall it. Then run '$python -m pip install numpy' to reinstall it. For errors involving matplotlib, run '$python -m pip install matplotlib --force-reinstall --user', and the errors should be solved.
 
 Running python simulation.py without any additional command line argument will run the code will the default values set for each variable.
 Running $python simulation.py -h or $python simulation.py --help will run the help command, this will list all of the possible arguments to change the values of the variables.
