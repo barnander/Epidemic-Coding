@@ -20,7 +20,7 @@ The variables that will be listed are:
 
 --Hosprate, it will take a float(decimal) value as the chance that an infected individual can be sent to hospital each day they are infected, the default value for this is set to 0.1
 
---Hospcap, hospital capacity, it will take a float(decimal) value and use it as the proportion of the of the total population that can be hospitalised before the hospitals are at capacity and can no longer help the patients, the default value for this is set to 0.2
+--Hospcap, hospital capacity, it will take a float(decimal) value and use it as the proportion of the of the total population that can be hospitalised before the hospitals are at capacity and can no longer help the patients, the default value for this is set to 0.05
 
 --Demo, population demographic, this will take a string input of either 'S'(stationary - equal proportion of old and young people), 'C'(constrictive - more old people than young people), or 'E'(expansive - more young people than old people), the default demographic is 'S'
 
